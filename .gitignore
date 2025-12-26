@@ -1,0 +1,100 @@
+# XAMPP specific
+xampp/
+htdocs/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+.venv/
+*.egg-info/
+dist/
+build/
+.pytest_cache/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+*.ipynb_checkpoints/
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.project
+.classpath
+.settings/
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+$RECYCLE.BIN/
+
+# Logs
+*.log
+logs/
+error_log
+access_log
+
+# Temporary files
+*.tmp
+*.temp
+*.bak
+*.cache
+*.old
+
+# Database
+*.sql
+*.db
+*.sqlite
+*.sqlite3
+
+# Uploaded files (adjust as needed)
+uploads/
+user_uploads/
+temp_uploads/
+
+# Media files (uncomment if files are too large)
+# *.mp4
+# *.avi
+# *.mov
+# *.mkv
+
+# Node modules (if using Node.js)
+node_modules/
+package-lock.json
+yarn.lock
+
+# Composer (if using PHP Composer)
+vendor/
+composer.lock
+
+# Configuration files with sensitive data
+config.local.php
+database.local.php
+*.local.php
+
+# Cache
+cache/
+tmp/
+temp/
+
+# Session files
+sessions/
+
+# Backup files
+*.backup
+*.bak
+backup/
+

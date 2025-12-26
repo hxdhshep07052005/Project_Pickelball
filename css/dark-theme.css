@@ -1,0 +1,845 @@
+/**
+ * Dark Theme Styles
+ * Applied when body or html has class 'theme-dark' or data-theme='dark'
+ */
+
+html[data-theme="dark"],
+html.theme-dark,
+body.theme-dark,
+body[data-theme="dark"] {
+    background: #0f172a !important;
+    background-color: #0f172a !important;
+    color: #e2e8f0;
+}
+
+html[data-theme="dark"] body,
+html.theme-dark body {
+    background: #0f172a !important;
+    background-color: #0f172a !important;
+}
+
+/* Override all white backgrounds */
+body.theme-dark,
+body.theme-dark html {
+    background-color: #0f172a !important;
+}
+
+/* Main sections - force dark background */
+html[data-theme="dark"] .video-analysis-section,
+html.theme-dark .video-analysis-section,
+body.theme-dark .video-analysis-section,
+body[data-theme="dark"] .video-analysis-section,
+html[data-theme="dark"] .shadowing-select-section,
+html.theme-dark .shadowing-select-section,
+body.theme-dark .shadowing-select-section,
+body[data-theme="dark"] .shadowing-select-section,
+html[data-theme="dark"] .shadowing-practice-section,
+html.theme-dark .shadowing-practice-section,
+body.theme-dark .shadowing-practice-section,
+body[data-theme="dark"] .shadowing-practice-section,
+html[data-theme="dark"] .settings-section,
+html.theme-dark .settings-section,
+body.theme-dark .settings-section,
+body[data-theme="dark"] .settings-section,
+html[data-theme="dark"] .profile-section,
+html.theme-dark .profile-section,
+body.theme-dark .profile-section,
+body[data-theme="dark"] .profile-section,
+html[data-theme="dark"] .auth-section,
+html.theme-dark .auth-section,
+body.theme-dark .auth-section,
+body[data-theme="dark"] .auth-section,
+html[data-theme="dark"] .features,
+html.theme-dark .features,
+body.theme-dark .features,
+body[data-theme="dark"] .features,
+html[data-theme="dark"] section:not(.hero),
+html.theme-dark section:not(.hero),
+body.theme-dark section:not(.hero),
+body[data-theme="dark"] section:not(.hero) {
+    background: #0f172a !important;
+    background-color: #0f172a !important;
+    color: #e2e8f0;
+}
+
+html[data-theme="dark"] .header,
+html.theme-dark .header,
+body.theme-dark .header,
+body[data-theme="dark"] .header {
+    background: #1e293b !important;
+    border-bottom-color: #334155 !important;
+}
+
+html[data-theme="dark"] .header-container,
+html.theme-dark .header-container,
+body.theme-dark .header-container,
+body[data-theme="dark"] .header-container {
+    color: #e2e8f0 !important;
+}
+
+html[data-theme="dark"] .logo-text,
+html.theme-dark .logo-text,
+body.theme-dark .logo-text,
+body[data-theme="dark"] .logo-text {
+    color: #e2e8f0 !important;
+}
+
+html[data-theme="dark"] .nav-link,
+html.theme-dark .nav-link,
+body.theme-dark .nav-link,
+body[data-theme="dark"] .nav-link {
+    color: #cbd5e1 !important;
+}
+
+html[data-theme="dark"] .nav-link:hover,
+html.theme-dark .nav-link:hover,
+body.theme-dark .nav-link:hover,
+body[data-theme="dark"] .nav-link:hover {
+    color: #10b981 !important;
+}
+
+html[data-theme="dark"] .dropdown-menu,
+html.theme-dark .dropdown-menu,
+body.theme-dark .dropdown-menu,
+body[data-theme="dark"] .dropdown-menu {
+    background: #1e293b !important;
+    border: 1px solid #334155 !important;
+}
+
+html[data-theme="dark"] .dropdown-link,
+html.theme-dark .dropdown-link,
+body.theme-dark .dropdown-link,
+body[data-theme="dark"] .dropdown-link {
+    color: #cbd5e1 !important;
+}
+
+html[data-theme="dark"] .dropdown-link:hover,
+html.theme-dark .dropdown-link:hover,
+body.theme-dark .dropdown-link:hover,
+body[data-theme="dark"] .dropdown-link:hover {
+    background: #334155 !important;
+    color: #10b981 !important;
+}
+
+html[data-theme="dark"] .user-name,
+html.theme-dark .user-name,
+body.theme-dark .user-name,
+body[data-theme="dark"] .user-name {
+    color: #e2e8f0 !important;
+}
+
+body.theme-dark .btn-login {
+    background: #10b981;
+    color: #ffffff;
+}
+
+body.theme-dark .btn-login:hover {
+    background: #059669;
+}
+
+/* Card backgrounds */
+html[data-theme="dark"] .auth-card,
+html.theme-dark .auth-card,
+body.theme-dark .auth-card,
+body[data-theme="dark"] .auth-card,
+html[data-theme="dark"] .settings-card,
+html.theme-dark .settings-card,
+body.theme-dark .settings-card,
+body[data-theme="dark"] .settings-card,
+html[data-theme="dark"] .upload-section,
+html.theme-dark .upload-section,
+body.theme-dark .upload-section,
+body[data-theme="dark"] .upload-section,
+html[data-theme="dark"] .result-section,
+html.theme-dark .result-section,
+body.theme-dark .result-section,
+body[data-theme="dark"] .result-section,
+html[data-theme="dark"] .history-section,
+html.theme-dark .history-section,
+body.theme-dark .history-section,
+body[data-theme="dark"] .history-section,
+html[data-theme="dark"] .profile-header,
+html.theme-dark .profile-header,
+body.theme-dark .profile-header,
+body[data-theme="dark"] .profile-header,
+html[data-theme="dark"] .practice-card,
+html.theme-dark .practice-card,
+body.theme-dark .practice-card,
+body[data-theme="dark"] .practice-card {
+    background: #1e293b !important;
+    border-color: #334155 !important;
+    color: #e2e8f0 !important;
+}
+
+/* Text colors */
+body.theme-dark h1,
+body.theme-dark h2,
+body.theme-dark h3,
+body.theme-dark .page-title,
+body.theme-dark .group-title,
+body.theme-dark .result-title,
+body.theme-dark .history-title {
+    color: #e2e8f0;
+}
+
+body.theme-dark .page-subtitle,
+body.theme-dark .group-description,
+body.theme-dark .card-content {
+    color: #cbd5e1;
+}
+
+/* Input fields */
+body.theme-dark input[type="text"],
+body.theme-dark input[type="email"],
+body.theme-dark input[type="password"],
+body.theme-dark textarea,
+body.theme-dark select {
+    background: #0f172a;
+    border-color: #334155;
+    color: #e2e8f0;
+}
+
+body.theme-dark input:focus,
+body.theme-dark textarea:focus,
+body.theme-dark select:focus {
+    border-color: #10b981;
+    background: #1e293b;
+}
+
+/* Buttons */
+body.theme-dark .btn-primary,
+body.theme-dark .btn-secondary,
+body.theme-dark .submit-btn,
+body.theme-dark .save-btn {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    color: #ffffff;
+}
+
+/* Option items */
+body.theme-dark .option-item {
+    background: #0f172a;
+    border-color: #334155;
+}
+
+body.theme-dark .option-item:hover,
+body.theme-dark .option-item.selected {
+    background: #1e293b;
+    border-color: #10b981;
+}
+
+body.theme-dark .option-text {
+    color: #e2e8f0;
+}
+
+body.theme-dark .option-subtext {
+    color: #94a3b8;
+}
+
+/* History items */
+body.theme-dark .history-item {
+    background: #0f172a;
+    border-color: #334155;
+}
+
+body.theme-dark .history-item:hover {
+    background: #1e293b;
+}
+
+body.theme-dark .history-video-name {
+    color: #e2e8f0;
+}
+
+body.theme-dark .history-date {
+    color: #94a3b8;
+}
+
+/* File upload area */
+body.theme-dark .file-upload-area {
+    background: #0f172a;
+    border-color: #334155;
+}
+
+body.theme-dark .file-upload-area:hover,
+body.theme-dark .file-upload-area.dragover {
+    background: #1e293b;
+    border-color: #10b981;
+}
+
+/* Alerts */
+body.theme-dark .alert-error {
+    background: #7f1d1d;
+    border-color: #991b1b;
+    color: #fecaca;
+}
+
+body.theme-dark .alert-success {
+    background: #14532d;
+    border-color: #166534;
+    color: #bbf7d0;
+}
+
+/* Footer */
+body.theme-dark .footer {
+    background: #1e293b;
+    border-top-color: #334155;
+    color: #cbd5e1;
+}
+
+body.theme-dark .footer a {
+    color: #cbd5e1;
+}
+
+body.theme-dark .footer a:hover {
+    color: #10b981;
+}
+
+/* Index page sections - use multiple selectors for higher specificity */
+html[data-theme="dark"] .features,
+html.theme-dark .features,
+body.theme-dark .features,
+body[data-theme="dark"] .features {
+    background: #0f172a !important;
+    background-color: #0f172a !important;
+}
+
+/* Techniques section */
+html[data-theme="dark"] .techniques,
+html.theme-dark .techniques,
+body.theme-dark .techniques,
+body[data-theme="dark"] .techniques {
+    background: #0f172a !important;
+    background-color: #0f172a !important;
+}
+
+/* Technique cards */
+html[data-theme="dark"] .technique-card,
+html.theme-dark .technique-card,
+body.theme-dark .technique-card,
+body[data-theme="dark"] .technique-card {
+    background: #1e293b !important;
+    background-color: #1e293b !important;
+    border-color: #334155 !important;
+}
+
+html[data-theme="dark"] .technique-card h3,
+html.theme-dark .technique-card h3,
+body.theme-dark .technique-card h3,
+body[data-theme="dark"] .technique-card h3 {
+    color: #e2e8f0 !important;
+}
+
+html[data-theme="dark"] .technique-card p,
+html.theme-dark .technique-card p,
+body.theme-dark .technique-card p,
+body[data-theme="dark"] .technique-card p {
+    color: #cbd5e1 !important;
+}
+
+html[data-theme="dark"] .section-title,
+html.theme-dark .section-title,
+body.theme-dark .section-title,
+body[data-theme="dark"] .section-title {
+    color: #e2e8f0 !important;
+}
+
+html[data-theme="dark"] .section-subtitle,
+html.theme-dark .section-subtitle,
+body.theme-dark .section-subtitle,
+body[data-theme="dark"] .section-subtitle {
+    color: #cbd5e1 !important;
+}
+
+html[data-theme="dark"] .feature-card,
+html.theme-dark .feature-card,
+body.theme-dark .feature-card,
+body[data-theme="dark"] .feature-card {
+    background: #1e293b !important;
+    border-color: #334155 !important;
+    color: #e2e8f0 !important;
+}
+
+html[data-theme="dark"] .feature-card h3,
+html.theme-dark .feature-card h3,
+body.theme-dark .feature-card h3,
+body[data-theme="dark"] .feature-card h3,
+html[data-theme="dark"] .feature-card-title,
+html.theme-dark .feature-card-title,
+body.theme-dark .feature-card-title,
+body[data-theme="dark"] .feature-card-title {
+    color: #e2e8f0 !important;
+}
+
+html[data-theme="dark"] .feature-card p,
+html.theme-dark .feature-card p,
+body.theme-dark .feature-card p,
+body[data-theme="dark"] .feature-card p,
+html[data-theme="dark"] .feature-description,
+html.theme-dark .feature-description,
+body.theme-dark .feature-description,
+body[data-theme="dark"] .feature-description {
+    color: #cbd5e1 !important;
+}
+
+html[data-theme="dark"] .feature-list li,
+html.theme-dark .feature-list li,
+body.theme-dark .feature-list li,
+body[data-theme="dark"] .feature-list li {
+    color: #cbd5e1 !important;
+}
+
+/* General background overrides */
+html[data-theme="dark"] section:not(.hero),
+html.theme-dark section:not(.hero),
+body.theme-dark section:not(.hero),
+body[data-theme="dark"] section:not(.hero) {
+    background: #0f172a !important;
+    background-color: #0f172a !important;
+}
+
+html[data-theme="dark"] .container,
+html.theme-dark .container,
+body.theme-dark .container,
+body[data-theme="dark"] .container,
+html[data-theme="dark"] .features-container,
+html.theme-dark .features-container,
+body.theme-dark .features-container,
+body[data-theme="dark"] .features-container,
+html[data-theme="dark"] .techniques-container,
+html.theme-dark .techniques-container,
+body.theme-dark .techniques-container,
+body[data-theme="dark"] .techniques-container {
+    background: transparent !important;
+    background-color: transparent !important;
+}
+
+/* Techniques section */
+html[data-theme="dark"] .techniques,
+html.theme-dark .techniques,
+body.theme-dark .techniques,
+body[data-theme="dark"] .techniques {
+    background: #0f172a !important;
+    background-color: #0f172a !important;
+}
+
+/* Technique cards */
+html[data-theme="dark"] .technique-card,
+html.theme-dark .technique-card,
+body.theme-dark .technique-card,
+body[data-theme="dark"] .technique-card {
+    background: #1e293b !important;
+    background-color: #1e293b !important;
+    border-color: #334155 !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3) !important;
+}
+
+html[data-theme="dark"] .technique-card:hover,
+html.theme-dark .technique-card:hover,
+body.theme-dark .technique-card:hover,
+body[data-theme="dark"] .technique-card:hover {
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4) !important;
+}
+
+html[data-theme="dark"] .technique-card h3,
+html.theme-dark .technique-card h3,
+body.theme-dark .technique-card h3,
+body[data-theme="dark"] .technique-card h3 {
+    color: #e2e8f0 !important;
+}
+
+html[data-theme="dark"] .technique-card p,
+html.theme-dark .technique-card p,
+body.theme-dark .technique-card p,
+body[data-theme="dark"] .technique-card p {
+    color: #cbd5e1 !important;
+}
+
+/* Feature items in dark mode */
+html[data-theme="dark"] .feature-text h3,
+html.theme-dark .feature-text h3,
+body.theme-dark .feature-text h3,
+body[data-theme="dark"] .feature-text h3 {
+    color: #e2e8f0 !important;
+}
+
+html[data-theme="dark"] .feature-text p,
+html.theme-dark .feature-text p,
+body.theme-dark .feature-text p,
+body[data-theme="dark"] .feature-text p {
+    color: #cbd5e1 !important;
+}
+
+html[data-theme="dark"] .feature-list li,
+html.theme-dark .feature-list li,
+body.theme-dark .feature-list li,
+body[data-theme="dark"] .feature-list li {
+    color: #cbd5e1 !important;
+}
+
+/* CTA section in dark mode */
+html[data-theme="dark"] .cta-section,
+html.theme-dark .cta-section,
+body.theme-dark .cta-section,
+body[data-theme="dark"] .cta-section {
+    background: linear-gradient(135deg, #059669 0%, #047857 100%) !important;
+}
+
+html[data-theme="dark"] .cta-section h2,
+html.theme-dark .cta-section h2,
+body.theme-dark .cta-section h2,
+body[data-theme="dark"] .cta-section h2 {
+    color: #ffffff !important;
+}
+
+html[data-theme="dark"] .cta-section p,
+html.theme-dark .cta-section p,
+body.theme-dark .cta-section p,
+body[data-theme="dark"] .cta-section p {
+    color: #f0fdf4 !important;
+}
+
+/* Video Analysis Page - Dark Mode */
+html[data-theme="dark"] .video-analysis-section,
+html.theme-dark .video-analysis-section,
+body.theme-dark .video-analysis-section,
+body[data-theme="dark"] .video-analysis-section {
+    background: #0f172a !important;
+    background-color: #0f172a !important;
+}
+
+html[data-theme="dark"] .page-title,
+html.theme-dark .page-title,
+body.theme-dark .page-title,
+body[data-theme="dark"] .page-title {
+    color: #ffffff !important;
+}
+
+html[data-theme="dark"] .page-subtitle,
+html.theme-dark .page-subtitle,
+body.theme-dark .page-subtitle,
+body[data-theme="dark"] .page-subtitle {
+    color: #e2e8f0 !important;
+}
+
+html[data-theme="dark"] .upload-section,
+html.theme-dark .upload-section,
+body.theme-dark .upload-section,
+body[data-theme="dark"] .upload-section {
+    background: #1e293b !important;
+    border-color: #334155 !important;
+}
+
+html[data-theme="dark"] .upload-text,
+html.theme-dark .upload-text,
+body.theme-dark .upload-text,
+body[data-theme="dark"] .upload-text {
+    color: #ffffff !important;
+}
+
+html[data-theme="dark"] .upload-hint,
+html.theme-dark .upload-hint,
+body.theme-dark .upload-hint,
+body[data-theme="dark"] .upload-hint {
+    color: #cbd5e1 !important;
+}
+
+html[data-theme="dark"] select,
+html.theme-dark select,
+body.theme-dark select,
+body[data-theme="dark"] select {
+    background: #1e293b !important;
+    border-color: #334155 !important;
+    color: #ffffff !important;
+}
+
+html[data-theme="dark"] select option,
+html.theme-dark select option,
+body.theme-dark select option,
+body[data-theme="dark"] select option {
+    background: #1e293b !important;
+    color: #ffffff !important;
+}
+
+html[data-theme="dark"] label,
+html.theme-dark label,
+body.theme-dark label,
+body[data-theme="dark"] label {
+    color: #ffffff !important;
+}
+
+html[data-theme="dark"] .file-name,
+html.theme-dark .file-name,
+body.theme-dark .file-name,
+body[data-theme="dark"] .file-name {
+    color: #ffffff !important;
+}
+
+html[data-theme="dark"] .file-size,
+html.theme-dark .file-size,
+body.theme-dark .file-size,
+body[data-theme="dark"] .file-size {
+    color: #cbd5e1 !important;
+}
+
+html[data-theme="dark"] .result-section,
+html.theme-dark .result-section,
+body.theme-dark .result-section,
+body[data-theme="dark"] .result-section {
+    background: #1e293b !important;
+    border-color: #334155 !important;
+}
+
+html[data-theme="dark"] .result-title,
+html.theme-dark .result-title,
+body.theme-dark .result-title,
+body[data-theme="dark"] .result-title {
+    color: #ffffff !important;
+}
+
+html[data-theme="dark"] .result-card,
+html.theme-dark .result-card,
+body.theme-dark .result-card,
+body[data-theme="dark"] .result-card {
+    background: #0f172a !important;
+    border-color: #334155 !important;
+}
+
+html[data-theme="dark"] .card-title,
+html.theme-dark .card-title,
+body.theme-dark .card-title,
+body[data-theme="dark"] .card-title {
+    color: #ffffff !important;
+}
+
+html[data-theme="dark"] .card-content,
+html.theme-dark .card-content,
+body.theme-dark .card-content,
+body[data-theme="dark"] .card-content {
+    color: #e2e8f0 !important;
+}
+
+html[data-theme="dark"] .technique-item,
+html.theme-dark .technique-item,
+body.theme-dark .technique-item,
+body[data-theme="dark"] .technique-item {
+    background: #1e293b !important;
+    border-color: #334155 !important;
+}
+
+html[data-theme="dark"] .technique-item span,
+html.theme-dark .technique-item span,
+body.theme-dark .technique-item span,
+body[data-theme="dark"] .technique-item span {
+    color: #ffffff !important;
+}
+
+html[data-theme="dark"] .empty-state,
+html.theme-dark .empty-state,
+body.theme-dark .empty-state,
+body[data-theme="dark"] .empty-state {
+    color: #e2e8f0 !important;
+}
+
+html[data-theme="dark"] .empty-state h3,
+html.theme-dark .empty-state h3,
+body.theme-dark .empty-state h3,
+body[data-theme="dark"] .empty-state h3 {
+    color: #ffffff !important;
+}
+
+html[data-theme="dark"] .empty-state p,
+html.theme-dark .empty-state p,
+body.theme-dark .empty-state p,
+body[data-theme="dark"] .empty-state p {
+    color: #cbd5e1 !important;
+}
+
+html[data-theme="dark"] .history-section,
+html.theme-dark .history-section,
+body.theme-dark .history-section,
+body[data-theme="dark"] .history-section {
+    background: #1e293b !important;
+    border-color: #334155 !important;
+}
+
+html[data-theme="dark"] .history-title,
+html.theme-dark .history-title,
+body.theme-dark .history-title,
+body[data-theme="dark"] .history-title {
+    color: #ffffff !important;
+}
+
+html[data-theme="dark"] .history-item,
+html.theme-dark .history-item,
+body.theme-dark .history-item,
+body[data-theme="dark"] .history-item {
+    background: #0f172a !important;
+    border-color: #334155 !important;
+}
+
+html[data-theme="dark"] .history-video-name,
+html.theme-dark .history-video-name,
+body.theme-dark .history-video-name,
+body[data-theme="dark"] .history-video-name {
+    color: #ffffff !important;
+}
+
+html[data-theme="dark"] .history-date,
+html.theme-dark .history-date,
+body.theme-dark .history-date,
+body[data-theme="dark"] .history-date {
+    color: #cbd5e1 !important;
+}
+
+html[data-theme="dark"] .no-techniques,
+html.theme-dark .no-techniques,
+body.theme-dark .no-techniques,
+body[data-theme="dark"] .no-techniques {
+    color: #94a3b8 !important;
+}
+
+html[data-theme="dark"] .selected-file,
+html.theme-dark .selected-file,
+body.theme-dark .selected-file,
+body[data-theme="dark"] .selected-file {
+    background: #1e293b !important;
+    border-color: #334155 !important;
+}
+
+/* Inline styles override for dark mode */
+html[data-theme="dark"] [style*="color: #0f172a"],
+html.theme-dark [style*="color: #0f172a"],
+body.theme-dark [style*="color: #0f172a"],
+body[data-theme="dark"] [style*="color: #0f172a"],
+html[data-theme="dark"] [style*="color: #1e293b"],
+html.theme-dark [style*="color: #1e293b"],
+body.theme-dark [style*="color: #1e293b"],
+body[data-theme="dark"] [style*="color: #1e293b"],
+html[data-theme="dark"] [style*="color: #334155"],
+html.theme-dark [style*="color: #334155"],
+body.theme-dark [style*="color: #334155"],
+body[data-theme="dark"] [style*="color: #334155"],
+html[data-theme="dark"] [style*="color: #475569"],
+html.theme-dark [style*="color: #475569"],
+body.theme-dark [style*="color: #475569"],
+body[data-theme="dark"] [style*="color: #475569"],
+html[data-theme="dark"] [style*="color: #64748b"],
+html.theme-dark [style*="color: #64748b"],
+body.theme-dark [style*="color: #64748b"],
+body[data-theme="dark"] [style*="color: #64748b"] {
+    color: #ffffff !important;
+}
+
+html[data-theme="dark"] [style*="color: #334155"] strong,
+html.theme-dark [style*="color: #334155"] strong,
+body.theme-dark [style*="color: #334155"] strong,
+body[data-theme="dark"] [style*="color: #334155"] strong {
+    color: #ffffff !important;
+}
+
+/* Force override inline styles and other backgrounds */
+body.theme-dark * {
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+/* Override any white/light backgrounds */
+body.theme-dark [style*="background: #ffffff"],
+body.theme-dark [style*="background:#ffffff"],
+body.theme-dark [style*="background: white"],
+body.theme-dark [style*="background-color: #ffffff"],
+body.theme-dark [style*="background-color:#ffffff"] {
+    background: #1e293b !important;
+    background-color: #1e293b !important;
+}
+
+/* Ensure body and html are dark */
+html body.theme-dark {
+    background: #0f172a !important;
+    background-color: #0f172a !important;
+}
+
+/* Chat Interface Dark Mode */
+html[data-theme="dark"] .chat-container,
+html.theme-dark .chat-container {
+    background: #1e293b !important;
+    border-color: #334155 !important;
+}
+
+html[data-theme="dark"] .chat-messages,
+html.theme-dark .chat-messages {
+    background: #0f172a !important;
+}
+
+html[data-theme="dark"] .chat-text,
+html.theme-dark .chat-text {
+    background: #1e293b !important;
+    color: #e2e8f0 !important;
+    border-color: #334155 !important;
+}
+
+html[data-theme="dark"] .chat-message-user .chat-text,
+html.theme-dark .chat-message-user .chat-text {
+    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%) !important;
+    color: #ffffff !important;
+}
+
+html[data-theme="dark"] .chat-name,
+html.theme-dark .chat-name {
+    color: #e2e8f0 !important;
+}
+
+html[data-theme="dark"] .chat-time,
+html.theme-dark .chat-time {
+    color: #94a3b8 !important;
+}
+
+html[data-theme="dark"] .chat-suggestions,
+html.theme-dark .chat-suggestions {
+    background: #1e293b !important;
+    border-color: #334155 !important;
+}
+
+html[data-theme="dark"] .suggestion-title,
+html.theme-dark .suggestion-title {
+    color: #94a3b8 !important;
+}
+
+html[data-theme="dark"] .suggestion-btn,
+html.theme-dark .suggestion-btn {
+    background: #0f172a !important;
+    border-color: #334155 !important;
+    color: #cbd5e1 !important;
+}
+
+html[data-theme="dark"] .suggestion-btn:hover,
+html.theme-dark .suggestion-btn:hover {
+    background: #1e293b !important;
+    color: #e2e8f0 !important;
+}
+
+html[data-theme="dark"] .chat-input-container,
+html.theme-dark .chat-input-container {
+    background: #1e293b !important;
+    border-color: #334155 !important;
+}
+
+html[data-theme="dark"] .chat-input-wrapper,
+html.theme-dark .chat-input-wrapper {
+    background: #0f172a !important;
+    border-color: #334155 !important;
+}
+
+html[data-theme="dark"] .chat-input-wrapper:focus-within,
+html.theme-dark .chat-input-wrapper:focus-within {
+    border-color: #3b82f6 !important;
+}
+
+html[data-theme="dark"] .chat-input,
+html.theme-dark .chat-input {
+    color: #e2e8f0 !important;
+}
+
+html[data-theme="dark"] .chat-input::placeholder,
+html.theme-dark .chat-input::placeholder {
+    color: #64748b !important;
+}
+

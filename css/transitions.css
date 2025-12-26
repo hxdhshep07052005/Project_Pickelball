@@ -1,0 +1,44 @@
+/* Smooth Scroll Behavior */
+html {
+    scroll-behavior: smooth;
+}
+
+/* Page Transition Effects */
+body {
+    opacity: 1;
+    transition: opacity 0.4s ease-in-out;
+    visibility: visible;
+}
+
+body.page-loading {
+    opacity: 0;
+}
+
+/* Link Transition */
+a {
+    transition: all 0.3s ease;
+}
+
+/* Smooth hover effects for buttons and links */
+.btn-primary,
+.btn-secondary,
+.btn-login,
+.nav-link,
+.dropdown-link,
+.dropdown-link:hover {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Smooth transitions for interactive elements */
+button,
+input,
+select,
+textarea {
+    transition: all 0.3s ease;
+}
+
+/* Prevent layout shift during transitions */
+img {
+    transition: opacity 0.3s ease;
+}
+
