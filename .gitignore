@@ -98,3 +98,16 @@ sessions/
 *.bak
 backup/
 
+# Executable files (too large for GitHub)
+*.exe
+*.msi
+*.dmg
+*.pkg
+
+# Large files
+ZaloSetup*.exe
+*.zip
+*.rar
+*.7z
+*.tar.gz
+
