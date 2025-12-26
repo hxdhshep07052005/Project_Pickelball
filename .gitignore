@@ -84,6 +84,9 @@ composer.lock
 config.local.php
 database.local.php
 *.local.php
+user/backend/config.php
+**/config.php
+!**/config.example.php
 
 # Cache
 cache/
