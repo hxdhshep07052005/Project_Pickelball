@@ -15,7 +15,7 @@ $type = $_GET['type'] ?? ''; // 'meta' or 'target'
 $stage = $_GET['stage'] ?? '0';
 
 // Validate inputs
-$validPoses = ['Serve', 'DriveForehand', 'DriveBackhand'];
+$validPoses = ['Serve', 'DriveForehand', 'DriveBackhand', 'Smash', 'Volley'];
 if (!in_array($pose, $validPoses)) {
     http_response_code(400);
     echo json_encode(['error' => 'Invalid pose']);
@@ -36,7 +36,7 @@ if ($stage < 0 || $stage > 3) {
 }
 
 // Path to .npy file
-$npyPath = __DIR__ . '/../../assets/' . $pose . '/' . $type . '_' . $stage . '.npy';
+$npyPath = __DIR__ . '/../../shadowing_for_pickleball-main/shadowing_for_pickleball-main/assets/' . $pose . '/' . $type . '_' . $stage . '.npy';
 
 if (!file_exists($npyPath)) {
     http_response_code(404);

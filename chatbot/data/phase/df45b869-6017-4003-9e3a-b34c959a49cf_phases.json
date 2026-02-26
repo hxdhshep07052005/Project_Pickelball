@@ -1,0 +1,62 @@
+[
+  {
+    "frame": "frame_0000_s15_m1_p0_b0.jpg",
+    "phase": "READY",
+    "elbow_angle": 170.9,
+    "wrist_velocity": 0
+  },
+  {
+    "frame": "frame_0001_s13_m1_p0_b0.jpg",
+    "phase": "BACKSWING",
+    "elbow_angle": 165.5,
+    "wrist_velocity": -0.0041
+  },
+  {
+    "frame": "frame_0002_s15_m1_p0_b0.jpg",
+    "phase": "FOLLOW_THROUGH",
+    "elbow_angle": 95.9,
+    "wrist_velocity": 0.121
+  },
+  {
+    "frame": "frame_0003_s12_m1_p0_b0.jpg",
+    "phase": "FOLLOW_THROUGH",
+    "elbow_angle": 83.3,
+    "wrist_velocity": 0.0292
+  },
+  {
+    "frame": "frame_0004_s15_m1_p0_b0.jpg",
+    "phase": "BACKSWING",
+    "elbow_angle": 155.2,
+    "wrist_velocity": -0.1451
+  },
+  {
+    "frame": "frame_0005_s13_m1_p0_b0.jpg",
+    "phase": "FOLLOW_THROUGH",
+    "elbow_angle": 25.4,
+    "wrist_velocity": 0.0323
+  },
+  {
+    "frame": "frame_0006_s15_m1_p0_b0.jpg",
+    "phase": "FOLLOW_THROUGH",
+    "elbow_angle": 104.5,
+    "wrist_velocity": 0.1279
+  },
+  {
+    "frame": "frame_0007_s13_m2_p0_b0.jpg",
+    "phase": "BACKSWING",
+    "elbow_angle": 89.2,
+    "wrist_velocity": -0.0077
+  },
+  {
+    "frame": "frame_0008_s15_m1_p0_b0.jpg",
+    "phase": "BACKSWING",
+    "elbow_angle": 102.6,
+    "wrist_velocity": -0.0998
+  },
+  {
+    "frame": "frame_0009_s15_m0_p0_b0.jpg",
+    "phase": "READY",
+    "elbow_angle": 119.6,
+    "wrist_velocity": 0.0016
+  }
+]

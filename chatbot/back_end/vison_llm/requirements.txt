@@ -1,0 +1,13 @@
+# Hugging Face Vision-Language Models
+transformers>=4.35.0
+torch>=2.0.0
+torchvision>=0.15.0
+pillow>=9.0.0
+accelerate>=0.20.0
+
+# Optional: for better performance
+# bitsandbytes  # for quantization (reduces memory usage)
+
+
+
+

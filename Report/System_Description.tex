@@ -1,0 +1,338 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{geometry}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{titlesec}
+\usepackage{fancyhdr}
+\usepackage{enumitem}
+\usepackage{float}
+\usepackage{array}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{caption}
+\usepackage{subcaption}
+
+% Page setup
+\geometry{margin=0.8in}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[R]{\thepage}
+
+% Title formatting
+\titleformat{\section}
+{\large\bfseries}
+{\thesection}{1em}{}
+
+\titleformat{\subsection}
+{\normalsize\bfseries}
+{\thesubsection}{1em}{}
+
+% Hyperref setup
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    pdftitle={Pickleball Training System - System Description}
+}
+
+
+\begin{document}
+
+\section{Website Introduction}
+
+The Pickleball Training System is a comprehensive web-based platform designed to assist users in improving their pickleball techniques through advanced training features. The website provides an intuitive and user-friendly interface that enables athletes to analyze their performance, practice with guided training, and track their progress over time.
+
+The platform offers multiple training modes including video analysis for technique evaluation, action prediction for movement classification, and interactive shadowing mode with ghost trainer overlay. Users can access personalized feedback, view detailed analysis results, and manage their training history through a modern web interface.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.9\textwidth]{images/home_page.png}
+\caption{Website Home Page}
+\label{fig:home_page}
+\end{figure}
+
+\section{System Overview}
+
+\textbf{System Architecture:}
+\begin{itemize}[noitemsep,topsep=0pt]
+    \item \textbf{Frontend:} PHP with HTML5, CSS3, JavaScript for user interface
+    \item \textbf{Backend:} PHP 7.4+ with MySQL database for data management
+    \item \textbf{Web Services:} RESTful APIs for communication between frontend and processing services
+\end{itemize}
+
+\section{Core Functional Modules}
+
+\subsection{Authentication \& User Management}
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabularx}{\textwidth}{|X|X|}
+\hline
+\textbf{Functionality} & \textbf{Technical Implementation} \\
+\hline
+User Registration & Email verification, bcrypt password hashing \\
+\hline
+User Login & Email/password or Google OAuth 2.0 \\
+\hline
+Profile Management & View and update user information \\
+\hline
+Password Change & Email verification required \\
+\hline
+Settings Management & Theme and language preferences \\
+\hline
+\end{tabularx}
+\caption{Authentication \& User Management Features}
+\end{table}
+
+\begin{figure}[H]
+\centering
+\begin{subfigure}{0.48\textwidth}
+\centering
+\includegraphics[width=\textwidth]{images/login_page.png}
+\caption{Login Page}
+\label{fig:login}
+\end{subfigure}
+\hfill
+\begin{subfigure}{0.48\textwidth}
+\centering
+\includegraphics[width=\textwidth]{images/register_page.png}
+\caption{Registration Page}
+\label{fig:register}
+\end{subfigure}
+\caption{Authentication Pages}
+\label{fig:authentication}
+\end{figure}
+
+\textbf{User Workflow:}
+\begin{enumerate}[noitemsep,topsep=0pt]
+    \item Register account with email verification
+    \item Login with email/password or Google OAuth
+    \item Access profile to view and update information
+    \item Configure settings (theme, language preferences)
+\end{enumerate}
+
+\subsection{Video Analysis Module}
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabularx}{\textwidth}{|X|X|}
+\hline
+\textbf{Website Functionality} & \textbf{User Experience \& Features} \\
+\hline
+Video Upload & Drag-and-drop or file selection (MP4/MOV/AVI) \\
+\hline
+Technique Selection & Dropdown menu to select training technique \\
+\hline
+Results Display & View detected techniques, scores, and feedback \\
+\hline
+AI Coach Chat & Interactive chat interface for questions \\
+\hline
+Analysis History & View list of previous analyses \\
+\hline
+\end{tabularx}
+\caption{Video Analysis Module Features}
+\end{table}
+
+\textbf{User Workflow:}
+\begin{enumerate}[noitemsep,topsep=0pt]
+    \item Select technique from dropdown menu
+    \item Upload video file via drag-and-drop or file browser
+    \item Submit for analysis $\rightarrow$ View results with detected techniques and feedback
+    \item Access analysis history to review past analyses
+\end{enumerate}
+
+\begin{figure}[H]
+\centering
+\begin{subfigure}{0.48\textwidth}
+\centering
+\includegraphics[width=\textwidth]{images/video_analysis_before.png}
+\caption{Before Analysis - Upload Interface}
+\label{fig:video_analysis_before}
+\end{subfigure}
+\hfill
+\begin{subfigure}{0.48\textwidth}
+\centering
+\includegraphics[width=\textwidth]{images/video_analysis_after.png}
+\caption{After Analysis - Results Display}
+\label{fig:video_analysis_after}
+\end{subfigure}
+\caption{Video Analysis Module Interface}
+\label{fig:video_analysis}
+\end{figure}
+
+\subsection{Action Prediction Module}
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabularx}{\textwidth}{|X|X|}
+\hline
+\textbf{Website Functionality} & \textbf{User Experience \& Features} \\
+\hline
+Video Upload & Upload video file for action prediction \\
+\hline
+Prediction Display & View predicted action and confidence score \\
+\hline
+Probability Breakdown & Show probability distribution for action classes \\
+\hline
+Prediction History & View list of previous predictions \\
+\hline
+\end{tabularx}
+\caption{Action Prediction Module Features}
+\end{table}
+
+\textbf{User Workflow:}
+\begin{enumerate}[noitemsep,topsep=0pt]
+    \item Upload video file through web interface
+    \item Submit for prediction $\rightarrow$ View predicted action and confidence score
+    \item Access prediction history to compare previous results
+\end{enumerate}
+
+\begin{figure}[H]
+\centering
+\begin{subfigure}{0.48\textwidth}
+\centering
+\includegraphics[width=\textwidth]{images/action_prediction_before.png}
+\caption{Before Prediction - Upload Interface}
+\label{fig:action_prediction_before}
+\end{subfigure}
+\hfill
+\begin{subfigure}{0.48\textwidth}
+\centering
+\includegraphics[width=\textwidth]{images/action_prediction_after.png}
+\caption{After Prediction - Results Display}
+\label{fig:action_prediction_after}
+\end{subfigure}
+\caption{Action Prediction Module Interface}
+\label{fig:action_prediction}
+\end{figure}
+
+\subsection{Shadowing Mode (Ghost Trainer)}
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabularx}{\textwidth}{|X|X|}
+\hline
+\textbf{Website Functionality} & \textbf{User Experience \& Features} \\
+\hline
+Technique Selection & Grid layout with available techniques \\
+\hline
+Practice Interface & Split-screen with camera feed and ghost overlay \\
+\hline
+Real-time Scoring & Live score percentage for pose matching \\
+\hline
+Stage Progression & 4-stage training system with progress tracking \\
+\hline
+Controls & Start, Reset, Next Pose buttons \\
+\hline
+\end{tabularx}
+\caption{Shadowing Mode Features}
+\end{table}
+
+\textbf{User Workflow:}
+\begin{enumerate}[noitemsep,topsep=0pt]
+    \item Select technique from selection grid
+    \item Initialize camera and pose detection model
+    \item Start ghost trainer $\rightarrow$ Match pose to ghost overlay
+    \item Complete 4 stages (85\%+ similarity held for 500ms per stage)
+    \item Use controls to reset stage or switch to next technique
+\end{enumerate}
+
+\begin{figure}[H]
+\centering
+\begin{subfigure}{0.48\textwidth}
+\centering
+\includegraphics[width=\textwidth]{images/shadowing_selection.png}
+\caption{Technique Selection}
+\label{fig:shadowing_selection}
+\end{subfigure}
+\hfill
+\begin{subfigure}{0.48\textwidth}
+\centering
+\includegraphics[width=\textwidth]{images/shadowing_practice.png}
+\caption{Practice Interface}
+\label{fig:shadowing_practice}
+\end{subfigure}
+\caption{Shadowing Mode Interface}
+\label{fig:shadowing_mode}
+\end{figure}
+
+\subsection{Admin Management Module}
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabularx}{\textwidth}{|X|X|}
+\hline
+\textbf{Functionality} & \textbf{Features} \\
+\hline
+User Management & View, edit, delete user accounts \\
+\hline
+Video Management & List, view details, delete videos \\
+\hline
+Statistics Dashboard & Charts and aggregated data visualization \\
+\hline
+Report Export & Generate CSV/PDF reports \\
+\hline
+\end{tabularx}
+\caption{Admin Management Module Features}
+\end{table}
+
+\textbf{Admin Workflow:}
+\begin{enumerate}[noitemsep,topsep=0pt]
+    \item Login to admin dashboard
+    \item Manage users (view, edit, delete accounts)
+    \item Manage videos (list, view details, delete)
+    \item View statistics and charts
+    \item Export reports in CSV/PDF format
+\end{enumerate}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.9\textwidth]{images/admin_dashboard.png}
+\caption{Admin Dashboard with Statistics and Charts}
+\label{fig:admin_dashboard}
+\end{figure}
+
+\textbf{Key Technologies:} PHP, MySQL, Chart.js (or similar), Data Export Libraries
+
+\section{Security and Performance}
+
+\textbf{Security Measures:}
+\begin{itemize}[noitemsep,topsep=0pt]
+    \item Password hashing with bcrypt and salt
+    \item Secure session management with PHP sessions
+    \item SQL injection prevention via PDO prepared statements
+    \item XSS prevention with output sanitization
+    \item File upload validation and type checking
+    \item CSRF protection with tokens
+    \item Google reCAPTCHA for spam prevention
+\end{itemize}
+
+\textbf{Performance Optimizations:}
+\begin{itemize}[noitemsep,topsep=0pt]
+    \item Database indexing on frequently queried columns
+    \item Client-side pose detection (MediaPipe in browser)
+    \item Async processing for video analysis
+    \item Optimized SQL queries with proper JOINs
+    \item Asset compression and lazy loading
+    \item Efficient frame capture intervals for live detection
+\end{itemize}
+
+
+
+\section{Conclusion}
+
+The Pickleball Training System website provides a comprehensive and user-friendly interface for pickleball training. The system offers multiple training modes including video analysis, action prediction, and interactive shadowing practice. The intuitive design and real-time feedback create an effective training platform that helps users improve their pickleball techniques.
+
+\vspace{0.5cm}
+
+\begin{center}
+\textit{This document describes the website's core functionalities and user-facing features.}
+\end{center}
+
+\end{document}

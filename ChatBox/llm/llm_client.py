@@ -126,7 +126,52 @@ def _get_placeholder_response(messages: List[Dict[str, str]]) -> str:
     user_messages = [m["content"] for m in messages if m.get("role") == "user"]
     user_question = user_messages[-1] if user_messages else ""
     
-    # Provide context-aware response based on question keywords
+    # Check if this is an analysis request (has feedback data) vs a chat question
+    # Analysis requests have feedback JSON in the user message, chat questions are shorter text
+    is_analysis_request = False
+    feedback_data = None
+    
+    if user_messages:
+        # Check if the user message contains feedback JSON (from analysis)
+        for msg in user_messages:
+            if 'structured feedback data' in msg.lower() or 'motion analysis' in msg.lower():
+                is_analysis_request = True
+                # Try to extract feedback JSON
+                try:
+                    import json
+                    import re
+                    # Find JSON in the message
+                    json_match = re.search(r'\{.*\}', msg, re.DOTALL)
+                    if json_match:
+                        feedback_data = json.loads(json_match.group())
+                except:
+                    pass
+                break
+    
+    # If this is an analysis request (not a chat question), generate feedback from actual data
+    if is_analysis_request and feedback_data:
+        feedback_text = "Based on your video analysis, here are the key findings:\n\n"
+        
+        if isinstance(feedback_data, list):
+            for idx, item in enumerate(feedback_data[:5], 1):  # Limit to first 5 issues
+                if isinstance(item, dict):
+                    issue = item.get('issue', '')
+                    tip = item.get('tip', '')
+                    if issue:
+                        feedback_text += f"{idx}. **{issue}**\n"
+                        if tip:
+                            feedback_text += f"   {tip}\n"
+                        feedback_text += "\n"
+        
+        feedback_text += "\n**Recommendations:**\n"
+        feedback_text += "• Practice 15-30 minutes daily focusing on these areas\n"
+        feedback_text += "• Work on one issue at a time for better results\n"
+        feedback_text += "• Record yourself regularly to track progress\n"
+        feedback_text += "• You should see improvement within 2-4 weeks of consistent practice\n"
+        
+        return feedback_text
+    
+    # Otherwise, handle as chat question
     question_lower = user_question.lower()
     
     if 'improve' in question_lower or 'better' in question_lower or 'how can i' in question_lower:

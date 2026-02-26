@@ -1,0 +1,92 @@
+[
+  {
+    "frame": "frame_0000_s1208_m1_p0_b0.jpg",
+    "phase": "READY",
+    "left_elbow_angle": 139.0,
+    "right_elbow_angle": 168.1,
+    "wrist_distance": 0.0181,
+    "shoulder_rotation": 0.0181,
+    "wrist_velocity": 0
+  },
+  {
+    "frame": "frame_0001_s1206_m1_p0_b0.jpg",
+    "phase": "FOLLOW_THROUGH",
+    "left_elbow_angle": 162.8,
+    "right_elbow_angle": 164.3,
+    "wrist_distance": 0.0099,
+    "shoulder_rotation": 0.0205,
+    "wrist_velocity": 0.007
+  },
+  {
+    "frame": "frame_0002_s995_m2_p0_b0.jpg",
+    "phase": "FOLLOW_THROUGH",
+    "left_elbow_angle": 146.8,
+    "right_elbow_angle": 172.5,
+    "wrist_distance": 0.0611,
+    "shoulder_rotation": 0.0676,
+    "wrist_velocity": 0.0557
+  },
+  {
+    "frame": "frame_0003_s995_m1_p0_b0.jpg",
+    "phase": "FOLLOW_THROUGH",
+    "left_elbow_angle": 150.1,
+    "right_elbow_angle": 176.3,
+    "wrist_distance": 0.0613,
+    "shoulder_rotation": 0.0624,
+    "wrist_velocity": 0.0052
+  },
+  {
+    "frame": "frame_0004_s931_m2_p0_b0.jpg",
+    "phase": "BACKSWING",
+    "left_elbow_angle": 162.3,
+    "right_elbow_angle": 162.4,
+    "wrist_distance": 0.0196,
+    "shoulder_rotation": 0.0285,
+    "wrist_velocity": -0.0554
+  },
+  {
+    "frame": "frame_0005_s936_m1_p0_b0.jpg",
+    "phase": "BACKSWING",
+    "left_elbow_angle": 160.1,
+    "right_elbow_angle": 162.0,
+    "wrist_distance": 0.0146,
+    "shoulder_rotation": 0.0268,
+    "wrist_velocity": -0.0118
+  },
+  {
+    "frame": "frame_0006_s860_m1_p0_b0.jpg",
+    "phase": "FOLLOW_THROUGH",
+    "left_elbow_angle": 50.1,
+    "right_elbow_angle": 54.9,
+    "wrist_distance": 0.0455,
+    "shoulder_rotation": 0.0671,
+    "wrist_velocity": 0.0534
+  },
+  {
+    "frame": "frame_0007_s850_m1_p0_b0.jpg",
+    "phase": "BACKSWING",
+    "left_elbow_angle": 50.7,
+    "right_elbow_angle": 62.9,
+    "wrist_distance": 0.0057,
+    "shoulder_rotation": 0.0661,
+    "wrist_velocity": -0.0316
+  },
+  {
+    "frame": "frame_0008_s900_m2_p0_b0.jpg",
+    "phase": "BACKSWING",
+    "left_elbow_angle": 167.7,
+    "right_elbow_angle": 161.3,
+    "wrist_distance": 0.0175,
+    "shoulder_rotation": 0.0253,
+    "wrist_velocity": -0.0212
+  },
+  {
+    "frame": "frame_0009_s908_m1_p0_b0.jpg",
+    "phase": "BACKSWING",
+    "left_elbow_angle": 166.8,
+    "right_elbow_angle": 165.7,
+    "wrist_distance": 0.013,
+    "shoulder_rotation": 0.0236,
+    "wrist_velocity": -0.0055
+  }
+]

@@ -53,10 +53,10 @@ html[data-theme="dark"] .features,
 html.theme-dark .features,
 body.theme-dark .features,
 body[data-theme="dark"] .features,
-html[data-theme="dark"] section:not(.hero),
-html.theme-dark section:not(.hero),
-body.theme-dark section:not(.hero),
-body[data-theme="dark"] section:not(.hero) {
+html[data-theme="dark"] section:not(.hero):not(.action-prediction-section),
+html.theme-dark section:not(.hero):not(.action-prediction-section),
+body.theme-dark section:not(.hero):not(.action-prediction-section),
+body[data-theme="dark"] section:not(.hero):not(.action-prediction-section) {
     background: #0f172a !important;
     background-color: #0f172a !important;
     color: #e2e8f0;
@@ -388,10 +388,10 @@ body[data-theme="dark"] .feature-list li {
 }
 
 /* General background overrides */
-html[data-theme="dark"] section:not(.hero),
-html.theme-dark section:not(.hero),
-body.theme-dark section:not(.hero),
-body[data-theme="dark"] section:not(.hero) {
+html[data-theme="dark"] section:not(.hero):not(.action-prediction-section),
+html.theme-dark section:not(.hero):not(.action-prediction-section),
+body.theme-dark section:not(.hero):not(.action-prediction-section),
+body[data-theme="dark"] section:not(.hero):not(.action-prediction-section) {
     background: #0f172a !important;
     background-color: #0f172a !important;
 }
@@ -504,6 +504,48 @@ body.theme-dark .video-analysis-section,
 body[data-theme="dark"] .video-analysis-section {
     background: #0f172a !important;
     background-color: #0f172a !important;
+}
+
+/* Action Prediction Page - Dark Mode */
+html[data-theme="dark"] .action-prediction-section,
+html.theme-dark .action-prediction-section,
+body.theme-dark .action-prediction-section,
+body[data-theme="dark"] .action-prediction-section {
+    background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%) !important;
+    background-color: #0f172a !important;
+    position: relative !important;
+    z-index: 1 !important;
+}
+
+html[data-theme="dark"] .action-prediction-section .page-title,
+html.theme-dark .action-prediction-section .page-title,
+body.theme-dark .action-prediction-section .page-title,
+body[data-theme="dark"] .action-prediction-section .page-title {
+    color: #ffffff !important;
+}
+
+html[data-theme="dark"] .action-prediction-section .page-subtitle,
+html.theme-dark .action-prediction-section .page-subtitle,
+body.theme-dark .action-prediction-section .page-subtitle,
+body[data-theme="dark"] .action-prediction-section .page-subtitle {
+    color: #e2e8f0 !important;
+}
+
+html[data-theme="dark"] .action-prediction-section .upload-section,
+html.theme-dark .action-prediction-section .upload-section,
+body.theme-dark .action-prediction-section .upload-section,
+body[data-theme="dark"] .action-prediction-section .upload-section {
+    background: #1e293b !important;
+    background-color: #1e293b !important;
+    border-color: #334155 !important;
+}
+
+html[data-theme="dark"] .action-prediction-section .history-section,
+html.theme-dark .action-prediction-section .history-section,
+body.theme-dark .action-prediction-section .history-section,
+body[data-theme="dark"] .action-prediction-section .history-section {
+    background: #1e293b !important;
+    background-color: #1e293b !important;
 }
 
 html[data-theme="dark"] .page-title,
@@ -741,12 +783,12 @@ body.theme-dark * {
     transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
 }
 
-/* Override any white/light backgrounds */
-body.theme-dark [style*="background: #ffffff"],
-body.theme-dark [style*="background:#ffffff"],
-body.theme-dark [style*="background: white"],
-body.theme-dark [style*="background-color: #ffffff"],
-body.theme-dark [style*="background-color:#ffffff"] {
+/* Override any white/light backgrounds - but exclude action-prediction-section */
+body.theme-dark [style*="background: #ffffff"]:not(.action-prediction-section):not(.action-prediction-section *),
+body.theme-dark [style*="background:#ffffff"]:not(.action-prediction-section):not(.action-prediction-section *),
+body.theme-dark [style*="background: white"]:not(.action-prediction-section):not(.action-prediction-section *),
+body.theme-dark [style*="background-color: #ffffff"]:not(.action-prediction-section):not(.action-prediction-section *),
+body.theme-dark [style*="background-color:#ffffff"]:not(.action-prediction-section):not(.action-prediction-section *) {
     background: #1e293b !important;
     background-color: #1e293b !important;
 }

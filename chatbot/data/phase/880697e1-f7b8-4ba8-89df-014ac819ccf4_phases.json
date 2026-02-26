@@ -1,0 +1,62 @@
+[
+  {
+    "frame": "frame_0008_sharp_16.jpg",
+    "phase": "READY",
+    "elbow_angle": 100.2,
+    "wrist_velocity": 0
+  },
+  {
+    "frame": "frame_0009_sharp_16.jpg",
+    "phase": "FOLLOW_THROUGH",
+    "elbow_angle": 84.5,
+    "wrist_velocity": 0.0063
+  },
+  {
+    "frame": "frame_0010_sharp_12.jpg",
+    "phase": "FOLLOW_THROUGH",
+    "elbow_angle": 114.2,
+    "wrist_velocity": 0.1754
+  },
+  {
+    "frame": "frame_0011_sharp_12.jpg",
+    "phase": "FOLLOW_THROUGH",
+    "elbow_angle": 104.4,
+    "wrist_velocity": 0.0069
+  },
+  {
+    "frame": "frame_0012_sharp_15.jpg",
+    "phase": "BACKSWING",
+    "elbow_angle": 124.2,
+    "wrist_velocity": -0.1067
+  },
+  {
+    "frame": "frame_0013_sharp_14.jpg",
+    "phase": "BACKSWING",
+    "elbow_angle": 119.3,
+    "wrist_velocity": -0.0022
+  },
+  {
+    "frame": "frame_0014_sharp_15.jpg",
+    "phase": "BACKSWING",
+    "elbow_angle": 177.7,
+    "wrist_velocity": -0.0531
+  },
+  {
+    "frame": "frame_0015_sharp_14.jpg",
+    "phase": "BACKSWING",
+    "elbow_angle": 161.3,
+    "wrist_velocity": -0.0023
+  },
+  {
+    "frame": "frame_0016_sharp_14.jpg",
+    "phase": "FOLLOW_THROUGH",
+    "elbow_angle": 86.8,
+    "wrist_velocity": 0.1339
+  },
+  {
+    "frame": "frame_0017_sharp_14.jpg",
+    "phase": "BACKSWING",
+    "elbow_angle": 88.5,
+    "wrist_velocity": -0.0316
+  }
+]

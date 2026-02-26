@@ -18,6 +18,7 @@ $poseName = $poseData['pose'];
 $displayName = $poseData['name'];
 $hasAssets = $poseData['hasAssets'];
 $assetsPath = $poseData['assetsPath'] ?? '';
+$availablePoses = $poseData['availablePoses'] ?? ['Serve', 'DriveForehand', 'DriveBackhand'];
 ?>
 <style>
     .shadowing-practice-section {
@@ -623,7 +624,7 @@ window.addEventListener('beforeunload', () => {
 
 // Get pose from PHP
 const SELECTED_POSE = "<?php echo htmlspecialchars($poseName, ENT_QUOTES, 'UTF-8'); ?>";
-const POSES_LIST = ["Serve", "DriveForehand", "DriveBackhand"];
+const POSES_LIST = <?php echo json_encode($availablePoses); ?>;
 const SIMILARITY_THRESH = 0.85;
 const REQUIRED_HOLD_TIME = 500; // milliseconds
 const COOLDOWN_TIME = 2000; // milliseconds
@@ -934,7 +935,7 @@ function resetStage() {
 }
 
 async function loadPoseAssets(poseName) {
-    const baseUrl = '/pickelball/assets/' + poseName + '/';
+    const baseUrl = '/pickelball/shadowing_for_pickleball-main/shadowing_for_pickleball-main/assets/' + poseName + '/';
     
     // Load ghost images
     for (let i = 0; i < 4; i++) {

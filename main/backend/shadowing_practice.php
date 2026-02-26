@@ -9,8 +9,7 @@ declare(strict_types=1);
 // Get pose parameter from URL
 $poseName = $_GET['pose'] ?? '';
 
-// Valid poses (matching Python model files)
-$validPoses = ['Serve', 'DriveForehand', 'DriveBackhand'];
+$validPoses = ['Serve', 'DriveForehand', 'DriveBackhand', 'Smash', 'Volley'];
 
 // Validate pose name
 if (!in_array($poseName, $validPoses)) {
@@ -31,25 +30,34 @@ $lang = getLanguage();
 $poseDisplayNames = [
     'Serve' => 'Serve',
     'DriveForehand' => 'Forehand Drive',
-    'DriveBackhand' => 'Backhand Drive'
+    'DriveBackhand' => 'Backhand Drive',
+    'Smash' => 'Smash',
+    'Volley' => 'Volley'
 ];
 
-// Check if assets exist for this pose
-$assetsDir = __DIR__ . '/../../assets/' . $poseName . '/';
+$assetsDir = __DIR__ . '/../../shadowing_for_pickleball-main/shadowing_for_pickleball-main/assets/' . $poseName . '/';
 $hasAssets = is_dir($assetsDir) && 
              file_exists($assetsDir . 'ghost_0.png') &&
              file_exists($assetsDir . 'meta_0.npy') &&
              file_exists($assetsDir . 'target_0.npy');
 
-// Get display name
 $displayName = $poseDisplayNames[$poseName] ?? $poseName;
 
-// Return pose data for use in frontend
+$assetsBase = __DIR__ . '/../../shadowing_for_pickleball-main/shadowing_for_pickleball-main/assets/';
+$availablePoses = [];
+foreach ($validPoses as $p) {
+    $dir = $assetsBase . $p . '/';
+    if (is_dir($dir) && file_exists($dir . 'ghost_0.png') && file_exists($dir . 'meta_0.npy') && file_exists($dir . 'target_0.npy')) {
+        $availablePoses[] = $p;
+    }
+}
+
 return [
     'valid' => true,
     'pose' => $poseName,
     'name' => $displayName,
     'hasAssets' => $hasAssets,
-    'assetsPath' => '/pickelball/assets/' . $poseName . '/'
+    'assetsPath' => '/pickelball/shadowing_for_pickleball-main/shadowing_for_pickleball-main/assets/' . $poseName . '/',
+    'availablePoses' => $availablePoses
 ];
 

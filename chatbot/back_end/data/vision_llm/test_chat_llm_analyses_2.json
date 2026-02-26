@@ -1,0 +1,102 @@
+[
+  {
+    "frame": "frame_0000_s15_m1_p97_b100.jpg",
+    "llm_analysis": {
+      "stance": "open",
+      "balance": "unstable",
+      "arm_extension": "full",
+      "follow_through_direction": "low",
+      "body_rotation": "good"
+    }
+  },
+  {
+    "frame": "frame_0001_s12_m1_p97_b100.jpg",
+    "llm_analysis": {
+      "stance": "open",
+      "balance": "unstable",
+      "arm_extension": "full",
+      "follow_through_direction": "low",
+      "body_rotation": "good"
+    }
+  },
+  {
+    "frame": "frame_0002_s15_m1_p99_b100.jpg",
+    "llm_analysis": {
+      "stance": "open",
+      "balance": "unstable",
+      "arm_extension": "full",
+      "follow_through_direction": "low",
+      "body_rotation": "good"
+    }
+  },
+  {
+    "frame": "frame_0003_s12_m1_p99_b100.jpg",
+    "llm_analysis": {
+      "stance": "open",
+      "balance": "unstable",
+      "arm_extension": "full",
+      "follow_through_direction": "low",
+      "body_rotation": "good"
+    }
+  },
+  {
+    "frame": "frame_0004_s13_m1_p98_b100.jpg",
+    "llm_analysis": {
+      "stance": "open",
+      "balance": "unstable",
+      "arm_extension": "full",
+      "follow_through_direction": "low",
+      "body_rotation": "good"
+    }
+  },
+  {
+    "frame": "frame_0005_s15_m1_p93_b100.jpg",
+    "llm_analysis": {
+      "stance": "open",
+      "balance": "unstable",
+      "arm_extension": "full",
+      "follow_through_direction": "low",
+      "body_rotation": "good"
+    }
+  },
+  {
+    "frame": "frame_0006_s15_m1_p98_b100.jpg",
+    "llm_analysis": {
+      "stance": "open",
+      "balance": "unstable",
+      "arm_extension": "full",
+      "follow_through_direction": "low",
+      "body_rotation": "good"
+    }
+  },
+  {
+    "frame": "frame_0007_s14_m1_p98_b100.jpg",
+    "llm_analysis": {
+      "stance": "open",
+      "balance": "unstable",
+      "arm_extension": "full",
+      "follow_through_direction": "low",
+      "body_rotation": "good"
+    }
+  },
+  {
+    "frame": "frame_0008_s15_m0_p99_b100.jpg",
+    "llm_analysis": {
+      "stance": "open",
+      "balance": "unstable",
+      "arm_extension": "full",
+      "follow_through_direction": "low",
+      "body_rotation": "good"
+    }
+  },
+  {
+    "frame": "frame_0009_s15_m0_p99_b100.jpg",
+    "llm_analysis": {
+      "stance": "open",
+      "balance": "unstable",
+      "arm_extension": "full",
+      "follow_through_direction": "low",
+      "body_rotation": "good"
+    }
+  }
+]

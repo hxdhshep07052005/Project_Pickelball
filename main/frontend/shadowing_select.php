@@ -225,24 +225,6 @@ $poses = require __DIR__ . '/../backend/shadowing_select.php';
                     </div>
                 </div>
             <?php endforeach; ?>
-            
-            <!-- Coming Soon Card -->
-            <div class="video-card coming-soon-card animate-on-scroll fade-in-up" style="transition-delay: <?php echo count($poses) * 0.1; ?>s; cursor: default;">
-                <div class="video-thumbnail">
-                    <div style="width: 100%; height: 100%; background: linear-gradient(135deg, #64748b 0%, #475569 100%); display: flex; align-items: center; justify-content: center; color: white; opacity: 0.8;">
-                        <svg width="80" height="80" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/>
-                        </svg>
-                    </div>
-                </div>
-                <div class="video-info">
-                    <h3 class="video-name">More Techniques</h3>
-                    <p class="video-description">Additional training techniques will be available soon. Stay tuned for updates!</p>
-                    <div style="margin-top: 12px; padding: 8px 12px; background: rgba(100, 116, 139, 0.1); border-radius: 6px; font-size: 12px; color: #64748b;">
-                        Coming Soon
-                    </div>
-                </div>
-            </div>
         </div>
     </div>
 </section>

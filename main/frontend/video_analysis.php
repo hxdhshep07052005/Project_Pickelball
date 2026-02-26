@@ -22,6 +22,24 @@ unset($_SESSION['analysis_error'], $_SESSION['analysis_success'], $_SESSION['ana
 $userId = (int)$authUser['id'];
 $history = [];
 try {
+    // Create table if it doesn't exist (using BIGINT to match users.id)
+    $pdo->exec("CREATE TABLE IF NOT EXISTS video_analyses (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        user_id BIGINT UNSIGNED NOT NULL,
+        video_name VARCHAR(255) NOT NULL,
+        video_path VARCHAR(500) NOT NULL,
+        techniques_detected TEXT,
+        score INT,
+        status VARCHAR(50) DEFAULT 'model_not_working',
+        session_id VARCHAR(255) DEFAULT NULL,
+        coaching_feedback TEXT DEFAULT NULL,
+        raw_feedback TEXT DEFAULT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        INDEX idx_user_id (user_id),
+        INDEX idx_created_at (created_at),
+        INDEX idx_session_id (session_id)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci");
+    
     $stmt = $pdo->prepare('SELECT id, video_name, video_path, techniques_detected, score, status, session_id, coaching_feedback, created_at FROM video_analyses WHERE user_id = ? ORDER BY created_at DESC LIMIT 50');
     $stmt->execute([$userId]);
     $history = $stmt->fetchAll();
@@ -38,6 +56,7 @@ try {
         }
     }
 } catch (PDOException $e) {
+    error_log("Error loading video analysis history: " . $e->getMessage());
     // If table doesn't exist yet, history will be empty
     $history = [];
 }
@@ -720,7 +739,7 @@ try {
                     </label>
                     <select name="skill" id="skillSelect" style="width: 100%; padding: 12px 16px; border: 2px solid #e2e8f0; border-radius: 8px; font-size: 15px; background: #ffffff; color: #0f172a; cursor: pointer; transition: border-color 0.3s;">
                         <option value="drive_forehand" selected><?php echo htmlspecialchars(t('forehand_drive'), ENT_QUOTES, 'UTF-8'); ?></option>
-                        <option value="drive_backhand" disabled><?php echo htmlspecialchars(t('backhand_drive'), ENT_QUOTES, 'UTF-8'); ?> (<?php echo htmlspecialchars(t('coming_soon'), ENT_QUOTES, 'UTF-8'); ?>)</option>
+                        <option value="drive_two_backhand"><?php echo htmlspecialchars(t('backhand_drive'), ENT_QUOTES, 'UTF-8'); ?></option>
                         <option value="serve" disabled>Serve (<?php echo htmlspecialchars(t('coming_soon'), ENT_QUOTES, 'UTF-8'); ?>)</option>
                         <option value="dink" disabled>Dink (<?php echo htmlspecialchars(t('coming_soon'), ENT_QUOTES, 'UTF-8'); ?>)</option>
                     </select>
@@ -833,9 +852,28 @@ try {
                                                 <div>• <?php echo htmlspecialchars($pkg, ENT_QUOTES, 'UTF-8'); ?></div>
                                             <?php endforeach; ?>
                                         </div>
-                                        <div style="margin-top: 12px; padding: 8px; background: #ffffff; border-radius: 4px; font-weight: 600; color: #991b1b;">
-                                            Install with: <code style="background: #f3f4f6; padding: 4px 8px; border-radius: 4px;">pip install <?php echo htmlspecialchars(implode(' ', $result['debug_info']['missing_packages']), ENT_QUOTES, 'UTF-8'); ?></code>
-                                        </div>
+                                        <?php if (isset($result['debug_info']['fix_instructions'])): ?>
+                                            <div style="margin-top: 12px; padding: 12px; background: #fef3c7; border-radius: 6px; border-left: 4px solid #f59e0b;">
+                                                <div style="font-weight: 700; color: #92400e; margin-bottom: 8px;">🔧 Fix Instructions:</div>
+                                                <div style="color: #78350f; font-family: monospace; font-size: 12px; line-height: 1.8;">
+                                                    <?php foreach ($result['debug_info']['fix_instructions'] as $instruction): ?>
+                                                        <div><?php echo htmlspecialchars($instruction, ENT_QUOTES, 'UTF-8'); ?></div>
+                                                    <?php endforeach; ?>
+                                                </div>
+                                            </div>
+                                        <?php else: ?>
+                                            <div style="margin-top: 12px; padding: 8px; background: #ffffff; border-radius: 4px; font-weight: 600; color: #991b1b;">
+                                                Install with: <code style="background: #f3f4f6; padding: 4px 8px; border-radius: 4px;">pip install <?php echo htmlspecialchars(implode(' ', $result['debug_info']['missing_packages']), ENT_QUOTES, 'UTF-8'); ?></code>
+                                            </div>
+                                        <?php endif; ?>
+                                        <?php if (isset($result['debug_info']['python_executable'])): ?>
+                                            <div style="margin-top: 12px; padding: 8px; background: #dbeafe; border-radius: 4px; font-size: 12px; color: #1e40af;">
+                                                <strong>Python Path:</strong> <code style="background: #eff6ff; padding: 2px 6px; border-radius: 3px;"><?php echo htmlspecialchars($result['debug_info']['python_executable'], ENT_QUOTES, 'UTF-8'); ?></code>
+                                                <div style="margin-top: 4px; font-size: 11px; color: #1e3a8a;">
+                                                    Use this Python to install packages: <code><?php echo htmlspecialchars($result['debug_info']['python_executable'], ENT_QUOTES, 'UTF-8'); ?> -m pip install ...</code>
+                                                </div>
+                                            </div>
+                                        <?php endif; ?>
                                     </div>
                                 <?php endif; ?>
                                 <?php if (isset($result['debug_info']['analysis_error'])): ?>
@@ -890,7 +928,39 @@ try {
                                     <div class="chat-text">
                                         <?php if (!empty($result['coaching_feedback'])): ?>
                                             <?php 
-                                            $feedback = is_string($result['coaching_feedback']) ? $result['coaching_feedback'] : json_encode($result['coaching_feedback']);
+                                            // Decode coaching_feedback properly
+                                            $coachingFeedback = $result['coaching_feedback'];
+                                            if (is_string($coachingFeedback)) {
+                                                // Try to decode JSON if it's a JSON string
+                                                $decoded = json_decode($coachingFeedback, true);
+                                                if (json_last_error() === JSON_ERROR_NONE && is_array($decoded)) {
+                                                    // If it's an array, extract text or convert to readable format
+                                                    if (isset($decoded['text'])) {
+                                                        $feedback = $decoded['text'];
+                                                    } elseif (isset($decoded['feedback'])) {
+                                                        $feedback = $decoded['feedback'];
+                                                    } elseif (isset($decoded[0]) && is_string($decoded[0])) {
+                                                        $feedback = implode("\n", $decoded);
+                                                    } else {
+                                                        $feedback = $coachingFeedback; // Keep original if can't parse
+                                                    }
+                                                } else {
+                                                    $feedback = $coachingFeedback; // Keep as string
+                                                }
+                                            } elseif (is_array($coachingFeedback)) {
+                                                // If already an array, extract text or convert to readable format
+                                                if (isset($coachingFeedback['text'])) {
+                                                    $feedback = $coachingFeedback['text'];
+                                                } elseif (isset($coachingFeedback['feedback'])) {
+                                                    $feedback = $coachingFeedback['feedback'];
+                                                } elseif (isset($coachingFeedback[0]) && is_string($coachingFeedback[0])) {
+                                                    $feedback = implode("\n", $coachingFeedback);
+                                                } else {
+                                                    $feedback = json_encode($coachingFeedback, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
+                                                }
+                                            } else {
+                                                $feedback = (string)$coachingFeedback;
+                                            }
                                             echo nl2br(htmlspecialchars($feedback, ENT_QUOTES, 'UTF-8')); 
                                             ?>
                                         <?php else: ?>
@@ -939,6 +1009,18 @@ try {
                                 </button>
                                 <button class="suggestion-btn" onclick="sendSuggestion('<?php echo htmlspecialchars(t('timeline_improvement'), ENT_QUOTES, 'UTF-8'); ?>')">
                                     <?php echo htmlspecialchars(t('timeline_improvement'), ENT_QUOTES, 'UTF-8'); ?>
+                                </button>
+                                <button class="suggestion-btn" onclick="sendSuggestion('<?php echo htmlspecialchars(t('common_mistakes'), ENT_QUOTES, 'UTF-8'); ?>')">
+                                    <?php echo htmlspecialchars(t('common_mistakes'), ENT_QUOTES, 'UTF-8'); ?>
+                                </button>
+                                <button class="suggestion-btn" onclick="sendSuggestion('<?php echo htmlspecialchars(t('drill_exercises'), ENT_QUOTES, 'UTF-8'); ?>')">
+                                    <?php echo htmlspecialchars(t('drill_exercises'), ENT_QUOTES, 'UTF-8'); ?>
+                                </button>
+                                <button class="suggestion-btn" onclick="sendSuggestion('<?php echo htmlspecialchars(t('warmup_routine'), ENT_QUOTES, 'UTF-8'); ?>')">
+                                    <?php echo htmlspecialchars(t('warmup_routine'), ENT_QUOTES, 'UTF-8'); ?>
+                                </button>
+                                <button class="suggestion-btn" onclick="sendSuggestion('<?php echo htmlspecialchars(t('strength_training'), ENT_QUOTES, 'UTF-8'); ?>')">
+                                    <?php echo htmlspecialchars(t('strength_training'), ENT_QUOTES, 'UTF-8'); ?>
                                 </button>
                             </div>
                         </div>

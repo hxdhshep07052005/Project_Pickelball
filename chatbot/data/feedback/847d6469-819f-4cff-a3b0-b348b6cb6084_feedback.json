@@ -1,0 +1,8 @@
+[
+  {
+    "code": "FH00",
+    "issue": "No swing peak detected",
+    "severity": "high",
+    "tip": "Make a full forward swing with clear acceleration."
+  }
+]
