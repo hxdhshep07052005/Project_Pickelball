@@ -34,7 +34,7 @@ uvicorn main:app --reload
 # Set environment variables
 export LLM_PROVIDER=openai  # or "anthropic", "ollama"
 export LLM_MODEL=gpt-4      # or "claude-3-opus-20240229", etc.
-export OPENAI_API_KEY= "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"
+export OPENAI_API_KEY="your-openai-api-key-here"
 ```
 
 ## Endpoints
