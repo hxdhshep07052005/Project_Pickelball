@@ -15,7 +15,6 @@ from pathlib import Path
 from ultralytics import YOLO
 from tqdm import tqdm
 
-# Model architecture
 class KeypointLSTMClassifier(nn.Module):
     def __init__(self, feature_dim=51, hidden=128, num_layers=1,
                  num_classes=2, dropout=0.3):
@@ -94,32 +93,29 @@ class KeypointExtractor:
 def predict_video(video_path, model_path, device='cpu'):
     """
     Predict action class from video
-    
+
     Args:
         video_path: Path to video file
         model_path: Path to model .pth file
         device: 'cpu' or 'cuda'
-    
+
     Returns:
         dict with prediction results
     """
     try:
-        # Initialize components
         keyframe_extractor = AdaptiveKeyframeExtractor(target_frames=16)
         keypoint_extractor = KeypointExtractor(device=device)
-        
-        # Extract keyframes
+
         frame_indices = keyframe_extractor.extract_frame_indices(video_path)
         if len(frame_indices) == 0:
             return {
                 "success": False,
                 "error": "No frames extracted from video"
             }
-        
-        # Extract keypoints from frames
+
         cap = cv2.VideoCapture(video_path)
         features = []
-        
+
         for idx in frame_indices:
             cap.set(cv2.CAP_PROP_POS_FRAMES, idx)
             ret, frame = cap.read()
@@ -127,32 +123,27 @@ def predict_video(video_path, model_path, device='cpu'):
                 kpt_features = keypoint_extractor.extract(frame)
                 features.append(kpt_features)
             else:
-                # Use zeros if frame read fails
                 features.append(np.zeros(51, dtype=np.float32))
-        
+
         cap.release()
-        
+
         if len(features) == 0:
             return {
                 "success": False,
                 "error": "Failed to extract features from video"
             }
-        
-        # Pad or truncate to 16 frames
+
         target_frames = 16
         if len(features) < target_frames:
-            # Repeat last frame
             last_frame = features[-1]
             while len(features) < target_frames:
                 features.append(last_frame.copy())
         else:
             features = features[:target_frames]
-        
-        # Convert to tensor
+
         features_array = np.array(features, dtype=np.float32)
         features_tensor = torch.tensor(features_array).unsqueeze(0).to(device)
-        
-        # Load model
+
         model = KeypointLSTMClassifier(
             feature_dim=51,
             hidden=128,
@@ -160,26 +151,23 @@ def predict_video(video_path, model_path, device='cpu'):
             num_classes=2,
             dropout=0.3
         )
-        
+
         model.load_state_dict(torch.load(model_path, map_location=device))
         model.eval()
         model.to(device)
-        
-        # Predict
+
         with torch.no_grad():
             output = model(features_tensor)
             probabilities = torch.softmax(output, dim=1)
             predicted_class = output.argmax(1).item()
             confidence = probabilities[0][predicted_class].item()
-        
-        # Class names
+
         class_names = ['DriveBackhand', 'DriveForehand']
         predicted_name = class_names[predicted_class]
-        
-        # Get probabilities for both classes
+
         prob_backhand = probabilities[0][0].item()
         prob_forehand = probabilities[0][1].item()
-        
+
         return {
             "success": True,
             "predicted_class": predicted_name,
@@ -191,7 +179,7 @@ def predict_video(video_path, model_path, device='cpu'):
             },
             "frames_processed": len(features)
         }
-        
+
     except Exception as e:
         import traceback
         return {
@@ -206,20 +194,17 @@ def main():
     parser.add_argument("video_path", help="Path to video file")
     parser.add_argument("--model", help="Path to model file")
     parser.add_argument("--device", default="cpu", choices=["cpu", "cuda"], help="Device to use")
-    
+
     args = parser.parse_args()
-    
-    # Get absolute paths
+
     script_dir = os.path.dirname(os.path.abspath(__file__))
     video_path = os.path.abspath(args.video_path)
-    
-    # Find model file
+
     if args.model:
         model_path = os.path.abspath(args.model)
     else:
-        # Default: look in script directory
         model_path = os.path.join(script_dir, "Model_2dongtac.pth")
-    
+
     if not os.path.exists(video_path):
         result = {
             "success": False,
@@ -227,7 +212,7 @@ def main():
         }
         print(json.dumps(result, indent=2))
         sys.exit(1)
-    
+
     if not os.path.exists(model_path):
         result = {
             "success": False,
@@ -235,15 +220,13 @@ def main():
         }
         print(json.dumps(result, indent=2))
         sys.exit(1)
-    
-    # Predict
+
     result = predict_video(video_path, model_path, device=args.device)
     print(json.dumps(result, indent=2))
-    
+
     if not result.get("success"):
         sys.exit(1)
 
 
 if __name__ == "__main__":
     main()
-

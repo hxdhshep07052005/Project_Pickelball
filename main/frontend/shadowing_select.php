@@ -1,10 +1,8 @@
 <?php
-// Require authentication - redirect to login if not logged in
 require_once __DIR__ . '/../../user/backend/require_auth.php';
 require_once __DIR__ . '/../../includes/i18n.php';
 require_once __DIR__ . '/../../includes/header.php';
 
-// Load backend logic to get list of available poses
 $poses = require __DIR__ . '/../backend/shadowing_select.php';
 ?>
 <style>
@@ -189,10 +187,10 @@ $poses = require __DIR__ . '/../backend/shadowing_select.php';
             <h1 class="page-title"><?php echo htmlspecialchars(t('shadowing_mode'), ENT_QUOTES, 'UTF-8'); ?></h1>
             <p class="page-subtitle"><?php echo htmlspecialchars(t('shadowing_subtitle'), ENT_QUOTES, 'UTF-8'); ?></p>
         </div>
-        
+
         <div class="videos-grid">
             <?php foreach ($poses as $index => $pose): ?>
-                <div class="video-card animate-on-scroll fade-in-up" style="transition-delay: <?php echo $index * 0.1; ?>s;" 
+                <div class="video-card animate-on-scroll fade-in-up" style="transition-delay: <?php echo $index * 0.1; ?>s;"
                      onclick="window.location.href='shadowing_practice.php?pose=<?php echo urlencode($pose['pose']); ?>'">
                     <div class="video-thumbnail">
                         <?php if ($pose['hasAssets']): ?>
@@ -231,14 +229,11 @@ $poses = require __DIR__ . '/../backend/shadowing_select.php';
 
 <script src="/pickelball/main/frontend/js/scroll-animation.js"></script>
 <script>
-// Initialize video hover preview functionality
 document.addEventListener('DOMContentLoaded', () => {
-    // Play video on hover, pause and reset on mouse leave
     document.querySelectorAll('.video-thumbnail video').forEach(video => {
         const card = video.closest('.video-card');
         card.addEventListener('mouseenter', () => {
             video.play().catch(() => {
-                // Ignore autoplay errors (browser restrictions)
             });
         });
         card.addEventListener('mouseleave', () => {
@@ -250,4 +245,3 @@ document.addEventListener('DOMContentLoaded', () => {
 </script>
 
 <?php require_once __DIR__ . '/../../includes/footer.php'; ?>
-

@@ -1,10 +1,7 @@
 <?php
 declare(strict_types=1);
 
-/**
- * Admin login page frontend
- * Displays login form with username/password
- */
+
 
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
@@ -12,13 +9,11 @@ if (session_status() === PHP_SESSION_NONE) {
 
 require __DIR__ . '/../backend/session.php';
 
-// Redirect to dashboard if already logged in
 if (isset($_SESSION['admin'])) {
     header('Location: dashboard.php');
     exit;
 }
 
-// Get error message and username from session (if any)
 $error = $_SESSION['admin_login_error'] ?? null;
 $username = $_SESSION['admin_login_username'] ?? '';
 unset($_SESSION['admin_login_error'], $_SESSION['admin_login_username']);
@@ -177,4 +172,3 @@ unset($_SESSION['admin_login_error'], $_SESSION['admin_login_username']);
 </section>
 </body>
 </html>
-

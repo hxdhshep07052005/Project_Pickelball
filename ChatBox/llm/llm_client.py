@@ -1,8 +1,6 @@
 import os
 from typing import List, Dict
 
-# Configuration
-# Set your LLM provider via environment variable or config file
 LLM_PROVIDER = os.getenv("LLM_PROVIDER", "").lower()  # Options: "openai", "anthropic", "ollama", or "" for placeholder
 LLM_MODEL = os.getenv("LLM_MODEL", "gpt-4")  # Model name
 
@@ -10,17 +8,17 @@ LLM_MODEL = os.getenv("LLM_MODEL", "gpt-4")  # Model name
 def get_llm_response(messages: List[Dict[str, str]]) -> str:
     """
     Send messages to LLM API and return response.
-    
+
     Args:
         messages: List of message dicts with 'role' and 'content' keys
                  Format: [{"role": "system", "content": "..."}, ...]
-    
+
     Returns:
         str: LLM generated response text
     """
-    
+
     provider = LLM_PROVIDER.lower() if LLM_PROVIDER else ""
-    
+
     try:
         if provider == "openai":
             return _get_openai_response(messages)
@@ -29,10 +27,8 @@ def get_llm_response(messages: List[Dict[str, str]]) -> str:
         elif provider == "ollama":
             return _get_ollama_response(messages)
         else:
-            # Default: Use placeholder response (no LLM configured)
             return _get_placeholder_response(messages)
     except Exception as e:
-        # If any LLM provider fails, fall back to placeholder
         print(f"LLM provider '{provider}' failed: {str(e)}. Using placeholder response.")
         return _get_placeholder_response(messages)
 
@@ -41,12 +37,11 @@ def _get_openai_response(messages: List[Dict[str, str]]) -> str:
     """Get response from OpenAI API."""
     try:
         from openai import OpenAI
-        
-        # Check if API key is set
+
         api_key = os.getenv("OPENAI_API_KEY")
         if not api_key:
             raise Exception("OPENAI_API_KEY environment variable not set")
-        
+
         client = OpenAI(api_key=api_key)
         response = client.chat.completions.create(
             model=LLM_MODEL,
@@ -55,7 +50,7 @@ def _get_openai_response(messages: List[Dict[str, str]]) -> str:
             temperature=0.7
         )
         return response.choices[0].message.content
-    
+
     except ImportError:
         raise Exception("OpenAI library not installed. Install with: pip install openai")
     except Exception as e:
@@ -66,18 +61,16 @@ def _get_anthropic_response(messages: List[Dict[str, str]]) -> str:
     """Get response from Anthropic (Claude) API."""
     try:
         import anthropic
-        
+
         client = anthropic.Anthropic()
-        
-        # Convert messages format if needed
-        # Anthropic uses slightly different format
+
         response = client.messages.create(
             model=LLM_MODEL,
             max_tokens=500,
             messages=messages
         )
         return response.content[0].text
-    
+
     except ImportError:
         raise ImportError(
             "Anthropic library not installed. Install with: pip install anthropic"
@@ -90,11 +83,9 @@ def _get_ollama_response(messages: List[Dict[str, str]]) -> str:
     """Get response from Ollama (local models)."""
     try:
         import requests
-        
-        # Ollama API endpoint (default: http://localhost:11434)
+
         ollama_url = os.getenv("OLLAMA_URL", "http://localhost:11434/api/chat")
-        
-        # Convert messages format for Ollama
+
         response = requests.post(
             ollama_url,
             json={
@@ -105,7 +96,7 @@ def _get_ollama_response(messages: List[Dict[str, str]]) -> str:
         )
         response.raise_for_status()
         return response.json()["message"]["content"]
-    
+
     except ImportError:
         raise ImportError(
             "Requests library not installed. Install with: pip install requests"
@@ -121,37 +112,30 @@ def _get_placeholder_response(messages: List[Dict[str, str]]) -> str:
     """
     if not messages:
         return "No feedback available."
-    
-    # Extract the last user message (the actual question)
+
     user_messages = [m["content"] for m in messages if m.get("role") == "user"]
     user_question = user_messages[-1] if user_messages else ""
-    
-    # Check if this is an analysis request (has feedback data) vs a chat question
-    # Analysis requests have feedback JSON in the user message, chat questions are shorter text
+
     is_analysis_request = False
     feedback_data = None
-    
+
     if user_messages:
-        # Check if the user message contains feedback JSON (from analysis)
         for msg in user_messages:
             if 'structured feedback data' in msg.lower() or 'motion analysis' in msg.lower():
                 is_analysis_request = True
-                # Try to extract feedback JSON
                 try:
                     import json
                     import re
-                    # Find JSON in the message
                     json_match = re.search(r'\{.*\}', msg, re.DOTALL)
                     if json_match:
                         feedback_data = json.loads(json_match.group())
                 except:
                     pass
                 break
-    
-    # If this is an analysis request (not a chat question), generate feedback from actual data
+
     if is_analysis_request and feedback_data:
         feedback_text = "Based on your video analysis, here are the key findings:\n\n"
-        
+
         if isinstance(feedback_data, list):
             for idx, item in enumerate(feedback_data[:5], 1):  # Limit to first 5 issues
                 if isinstance(item, dict):
@@ -162,18 +146,17 @@ def _get_placeholder_response(messages: List[Dict[str, str]]) -> str:
                         if tip:
                             feedback_text += f"   {tip}\n"
                         feedback_text += "\n"
-        
+
         feedback_text += "\n**Recommendations:**\n"
         feedback_text += "• Practice 15-30 minutes daily focusing on these areas\n"
         feedback_text += "• Work on one issue at a time for better results\n"
         feedback_text += "• Record yourself regularly to track progress\n"
         feedback_text += "• You should see improvement within 2-4 weeks of consistent practice\n"
-        
+
         return feedback_text
-    
-    # Otherwise, handle as chat question
+
     question_lower = user_question.lower()
-    
+
     if 'improve' in question_lower or 'better' in question_lower or 'how can i' in question_lower:
         return (
             "To improve this technique, I recommend:\n\n"
@@ -211,9 +194,8 @@ def _get_placeholder_response(messages: List[Dict[str, str]]) -> str:
             "Everyone progresses at different rates. Stay consistent, be patient, and celebrate small wins along the way!"
         )
     else:
-        # Extract context from analysis if available
         context_msg = user_messages[0] if len(user_messages) > 1 else ""
-        
+
         if 'coaching feedback' in context_msg.lower() or 'technical issues' in context_msg.lower():
             return (
                 "Thank you for your question! Based on your analysis, I recommend:\n\n"

@@ -1,20 +1,15 @@
 <?php
 declare(strict_types=1);
 
-/**
- * User settings page frontend
- * Allows users to change theme and language preferences
- */
+
 
 require_once __DIR__ . '/../backend/require_auth.php';
 require_once __DIR__ . '/../backend/bootstrap.php';
 require_once __DIR__ . '/../../includes/i18n.php';
 require_once __DIR__ . '/../../includes/header.php';
 
-// Get user ID
 $userId = (int)$authUser['id'];
 
-// Get current preferences from database
 $currentTheme = 'light';
 $currentLanguage = 'en';
 
@@ -22,18 +17,16 @@ try {
     $stmt = $pdo->prepare('SELECT theme, language FROM user_preferences WHERE user_id = ? LIMIT 1');
     $stmt->execute([$userId]);
     $prefs = $stmt->fetch();
-    
+
     if ($prefs) {
         $currentTheme = $prefs['theme'] ?? 'light';
         $currentLanguage = $prefs['language'] ?? 'en';
     }
 } catch (PDOException $e) {
-    // Use defaults if table doesn't exist or error
     $currentTheme = $_SESSION['user_theme'] ?? 'light';
     $currentLanguage = $_SESSION['user_language'] ?? 'en';
 }
 
-// Get messages from session
 $error = $_SESSION['settings_error'] ?? null;
 $success = $_SESSION['settings_success'] ?? null;
 unset($_SESSION['settings_error'], $_SESSION['settings_success']);
@@ -232,7 +225,7 @@ unset($_SESSION['settings_error'], $_SESSION['settings_success']);
                         </div>
                         <input type="radio" name="theme" value="light" class="radio-input" <?php echo $currentTheme === 'light' ? 'checked' : ''; ?>>
                     </label>
-                    
+
                     <label class="option-item <?php echo $currentTheme === 'dark' ? 'selected' : ''; ?>" onclick="selectOption(this, 'theme', 'dark')">
                         <div class="option-label">
                             <svg class="option-icon" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
@@ -265,7 +258,7 @@ unset($_SESSION['settings_error'], $_SESSION['settings_success']);
                         </div>
                         <input type="radio" name="language" value="en" class="radio-input" <?php echo $currentLanguage === 'en' ? 'checked' : ''; ?>>
                     </label>
-                    
+
                     <label class="option-item <?php echo $currentLanguage === 'vi' ? 'selected' : ''; ?>" onclick="selectOption(this, 'language', 'vi')">
                         <div class="option-label">
                             <svg class="option-icon" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
@@ -288,24 +281,19 @@ unset($_SESSION['settings_error'], $_SESSION['settings_success']);
 
 <script src="/pickelball/main/frontend/js/scroll-animation.js"></script>
 <script>
-// Handle option selection
 function selectOption(element, type, value) {
-    // Remove selected class from all options of the same type
     const group = element.closest('.settings-group');
     group.querySelectorAll('.option-item').forEach(item => {
         item.classList.remove('selected');
     });
-    
-    // Add selected class to clicked option
+
     element.classList.add('selected');
-    
-    // Update radio input
+
     const radio = element.querySelector('input[type="radio"]');
     if (radio) {
         radio.checked = true;
     }
-    
-    // If theme changed, apply immediately (preview)
+
     if (type === 'theme' && window.themeHandler) {
         window.themeHandler.applyTheme(value);
     }
@@ -313,4 +301,3 @@ function selectOption(element, type, value) {
 </script>
 
 <?php require_once __DIR__ . '/../../includes/footer.php'; ?>
-

@@ -1,12 +1,9 @@
 <?php
 declare(strict_types=1);
 
-/**
- * English translations
- */
+
 
 return [
-    // Common
     'app_name' => 'Pickleball Training',
     'welcome' => 'Welcome',
     'login' => 'Login',
@@ -29,8 +26,7 @@ return [
     'error' => 'Error',
     'success' => 'Success',
     'confirm' => 'Confirm',
-    
-    // Navigation
+
     'nav_home' => 'Home',
     'nav_training' => 'Training',
     'nav_techniques' => 'Techniques',
@@ -43,8 +39,7 @@ return [
     'nav_live_session' => 'Live Session',
     'nav_shadowing_mode' => 'Shadowing Mode',
     'nav_performance_dashboard' => 'Performance Dashboard',
-    
-    // Auth
+
     'sign_in' => 'Sign In',
     'sign_up' => 'Sign Up',
     'sign_out' => 'Sign Out',
@@ -59,8 +54,7 @@ return [
     'already_have_account' => 'Already have an account?',
     'dont_have_account' => "Don't have an account?",
     'sign_in_with_google' => 'Sign in with Google',
-    
-    // Verification
+
     'verify_code' => 'Verify Code',
     'verify_registration' => 'Verify Registration',
     'verify_password_change' => 'Verify Password Change',
@@ -71,13 +65,11 @@ return [
     'code_expired' => 'Verification code expired.',
     'invalid_code' => 'Invalid verification code.',
     'too_many_attempts' => 'Too many incorrect attempts.',
-    
-    // Profile
+
     'change_password' => 'Change Password',
     'password_changed_success' => 'Your password has been changed successfully.',
     'password_change_error' => 'Failed to change password.',
-    
-    // Settings
+
     'settings_title' => 'Settings',
     'settings_subtitle' => 'Customize your experience with theme and language preferences.',
     'theme_settings' => 'Theme',
@@ -92,8 +84,7 @@ return [
     'vietnamese' => 'Tiếng Việt',
     'settings_saved' => 'Settings saved successfully.',
     'settings_error' => 'Failed to save settings.',
-    
-    // Video Analysis
+
     'video_analysis' => 'Video Analysis',
     'video_analysis_subtitle' => 'Upload your pickleball video to get AI-powered technique analysis and feedback.',
     'upload_video' => 'Click to upload or drag and drop',
@@ -126,7 +117,7 @@ return [
     'analysis_failed' => 'Analysis Failed',
     'analysis_failed_desc' => 'Video uploaded but analysis failed. Please check that Python is installed and all required packages are available. See debug information below for details.',
     'api_unavailable' => 'API Unavailable',
-    'api_unavailable_desc' => 'Analysis service is currently unavailable. Please ensure the ChatBox/run_analysis.py file exists and Python is properly installed.',
+    'api_unavailable_desc' => 'Analysis service is currently unavailable. Please ensure the chatbot_newest/chatbot/back_end/run_analysis.py file exists and Python is properly installed.',
     'api_error' => 'API Error',
     'api_error_desc' => 'Error running analysis service. Please check server logs for details.',
     'frames_extracted' => 'Frames Extracted',
@@ -154,8 +145,7 @@ return [
     'key_issues' => 'Key Issues Detected',
     'coaching_assistant' => 'Your Personal Coaching Assistant',
     'online' => 'Online',
-    
-    // Action Video Prediction
+
     'action_video_prediction' => 'Action Video Prediction',
     'action_prediction_subtitle' => 'Upload a video to predict if it\'s DriveBackhand or DriveForehand',
     'predict_action' => 'Predict Action',
@@ -167,8 +157,7 @@ return [
     'please_select_video' => 'Please select a video file',
     'processing' => 'Processing',
     'upload_error' => 'Error uploading video. Please try again.',
-    
-    // Shadowing Mode
+
     'shadowing_mode' => 'Shadowing Mode',
     'shadowing_subtitle' => 'Choose a technique to practice. Hover over a video to preview, then click to start shadowing practice.',
     'your_camera_view' => 'Your Camera View',
@@ -184,14 +173,12 @@ return [
     'camera_not_found' => 'No camera found on your device.',
     'more_techniques' => 'More Techniques',
     'coming_soon' => 'New techniques will be added in the future. Stay tuned for updates!',
-    
-    // Techniques
+
     'forehand_drive' => 'Forehand Drive',
     'forehand_drive_desc' => 'Develop powerful and accurate forehand drive shots.',
     'backhand_drive' => 'Backhand Drive',
     'backhand_drive_desc' => 'Perfect your backhand drive technique and power.',
-    
-    // Index page
+
     'hero_title' => 'Master Pickleball with AI-Powered Training',
     'hero_subtitle' => 'Elevate your game with cutting-edge computer vision and personalized coaching',
     'hero_description' => 'Experience the future of pickleball training. Our AI analyzes your technique in real-time and provides instant feedback to help you improve faster.',
@@ -199,15 +186,13 @@ return [
     'learn_more' => 'Learn More',
     'immersive_training' => 'IMMERSIVE TRAINING',
     'immersive_subtitle' => 'Advanced features powered by AI and computer vision',
-    
-    // Hero section
+
     'hero_main_title' => 'PICKLEBALL TRAINING',
     'hero_effective_platform' => 'The Most Effective AI-Powered Training Platform',
     'hero_learn_description' => 'Learn and improve your pickleball techniques with computer vision and artificial intelligence. Get instant feedback, real-time analysis, and personalized coaching guidance.',
     'get_started' => 'Get Started',
     'how_it_works' => 'How It Works',
-    
-    // Features section
+
     'training_approach' => 'Every training session is built around a proven step-by-step approach to maximize learning and skill progression. The insights you get directly translate into better technique and improved athletic performance.',
     'feature_video_analysis' => 'Video Analysis',
     'feature_video_analysis_desc' => 'Upload your training videos and get instant AI-powered technique analysis with detailed feedback and improvement suggestions. Our advanced computer vision technology analyzes every movement frame by frame.',
@@ -245,8 +230,7 @@ return [
     'feature_stunning_visuals_item2' => 'Multi-angle camera views',
     'feature_stunning_visuals_item3' => 'Interactive 3D movement visualization',
     'feature_stunning_visuals_item4' => 'Annotated technique highlights',
-    
-    // Techniques section
+
     'master_techniques' => 'MASTER THE TECHNIQUES',
     'master_techniques_subtitle' => 'Learn and perfect 4 core pickleball techniques with AI-powered analysis and feedback',
     'technique_serve' => 'Serve',
@@ -257,12 +241,10 @@ return [
     'technique_drive_forehand_desc' => 'Develop powerful and accurate forehand drives. Analyze your body positioning, swing mechanics, and follow-through.',
     'technique_drive_backhand' => 'Drive Backhand',
     'technique_drive_backhand_desc' => 'Strengthen your backhand drive technique. Get detailed analysis on your stance, rotation, and stroke execution.',
-    
-    // CTA section
+
     'cta_title' => 'STOP OBSERVING KNOWLEDGE, START ABSORBING IT',
     'cta_description' => 'Whether you are a coach with years of experience or an aspiring player – you\'ll experience faster learning and improved performance from day one with our AI-powered training platform.',
-    
-    // Live Action Detection
+
     'live_action_detection' => 'Live Action Detection',
     'live_action_subtitle' => 'Real-time pose detection from your webcam. Get instant feedback on your DriveBackhand and DriveForehand techniques.',
     'webcam_feed' => 'Webcam Feed',
@@ -281,4 +263,3 @@ return [
     'frames' => 'frames',
     'prediction_ready' => 'Prediction Ready',
 ];
-

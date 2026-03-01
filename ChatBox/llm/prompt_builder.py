@@ -1,7 +1,6 @@
 import json
 import os
 
-# Get the directory where this file is located
 LLM_DIR = os.path.dirname(os.path.abspath(__file__))
 PROMPTS_DIR = os.path.join(LLM_DIR, "prompts")
 
@@ -19,21 +18,19 @@ def load_prompt(prompt_path: str) -> str:
 def build_llm_messages(feedback_path: str, skill: str = "drive_forehand"):
     """
     Build LLM messages from feedback data.
-    
+
     Args:
         feedback_path: Path to feedback JSON file
         skill: Skill name (default: "drive_forehand")
-    
+
     Returns:
         List of message dicts for LLM API
     """
-    # Load skill-specific prompt
     prompt_file = os.path.join(PROMPTS_DIR, f"{skill}_prompt.txt")
-    
-    # Fallback to drive_forehand if skill-specific prompt doesn't exist
+
     if not os.path.exists(prompt_file):
         prompt_file = os.path.join(PROMPTS_DIR, "drive_forehand_prompt.txt")
-    
+
     system_prompt = load_prompt(prompt_file)
 
     feedback = load_feedback(feedback_path)

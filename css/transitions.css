@@ -1,9 +1,9 @@
-/* Smooth Scroll Behavior */
+
 html {
     scroll-behavior: smooth;
 }
 
-/* Page Transition Effects */
+
 body {
     opacity: 1;
     transition: opacity 0.4s ease-in-out;
@@ -14,12 +14,12 @@ body.page-loading {
     opacity: 0;
 }
 
-/* Link Transition */
+
 a {
     transition: all 0.3s ease;
 }
 
-/* Smooth hover effects for buttons and links */
+
 .btn-primary,
 .btn-secondary,
 .btn-login,
@@ -29,7 +29,7 @@ a {
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Smooth transitions for interactive elements */
+
 button,
 input,
 select,
@@ -37,8 +37,52 @@ textarea {
     transition: all 0.3s ease;
 }
 
-/* Prevent layout shift during transitions */
+
 img {
     transition: opacity 0.3s ease;
 }
 
+
+.fade-in-up,
+.fade-in-left,
+.fade-in-right,
+.fade-in {
+    opacity: 0;
+    transition: opacity 0.6s ease, transform 0.6s ease;
+    will-change: opacity, transform;
+}
+
+.fade-in-up {
+    transform: translateY(30px);
+}
+
+.fade-in-left {
+    transform: translateX(-30px);
+}
+
+.fade-in-right {
+    transform: translateX(30px);
+}
+
+.fade-in {
+    transform: scale(0.95);
+}
+
+.fade-in-up.animate-in,
+.fade-in-left.animate-in,
+.fade-in-right.animate-in,
+.fade-in.animate-in {
+    opacity: 1;
+    transform: translate(0, 0) scale(1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .fade-in-up,
+    .fade-in-left,
+    .fade-in-right,
+    .fade-in {
+        opacity: 1;
+        transform: none;
+        transition: none;
+    }
+}

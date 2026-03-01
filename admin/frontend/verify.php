@@ -1,10 +1,7 @@
 <?php
 declare(strict_types=1);
 
-/**
- * Admin OTP verification page frontend
- * Displays OTP input form for admin login verification
- */
+
 
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
@@ -12,7 +9,6 @@ if (session_status() === PHP_SESSION_NONE) {
 
 require __DIR__ . '/../backend/session.php';
 
-// Check if pending login session exists
 if (!isset($_SESSION['pending_admin_login'])) {
     header('Location: login.php');
     exit;
@@ -20,7 +16,6 @@ if (!isset($_SESSION['pending_admin_login'])) {
 
 $pending = $_SESSION['pending_admin_login'];
 
-// Get messages
 $notice = $_SESSION['admin_verify_notice'] ?? null;
 $error = $_SESSION['admin_verify_error'] ?? null;
 unset($_SESSION['admin_verify_error'], $_SESSION['admin_verify_notice']);
@@ -237,16 +232,16 @@ $maskedEmail = preg_replace('/(^.).+(@.*$)/', '$1***$2', $pending['email'] ?? ''
             <form method="post" action="../backend/verify.php" autocomplete="off" class="auth-form" id="otp-form">
                 <div class="form-group">
                     <label for="code" class="form-label">Verification Code</label>
-                    <input 
-                        type="text" 
-                        id="code" 
-                        name="code" 
-                        maxlength="6" 
-                        pattern="\d{6}" 
-                        inputmode="numeric" 
-                        required 
-                        class="otp-input" 
-                        placeholder="000000" 
+                    <input
+                        type="text"
+                        id="code"
+                        name="code"
+                        maxlength="6"
+                        pattern="\d{6}"
+                        inputmode="numeric"
+                        required
+                        class="otp-input"
+                        placeholder="000000"
                         autofocus
                     >
                     <p class="otp-hint">Enter the 6-digit code</p>
@@ -262,23 +257,19 @@ $maskedEmail = preg_replace('/(^.).+(@.*$)/', '$1***$2', $pending['email'] ?? ''
 <script>
 document.addEventListener('DOMContentLoaded', () => {
     const otpInput = document.getElementById('code');
-    
-    // Auto-format: only allow digits
+
     otpInput.addEventListener('input', (e) => {
         e.target.value = e.target.value.replace(/\D/g, '');
     });
-    
-    // Auto-submit when 6 digits are entered
+
     otpInput.addEventListener('input', (e) => {
         if (e.target.value.length === 6) {
             document.getElementById('otp-form').submit();
         }
     });
-    
-    // Focus on input
+
     otpInput.focus();
 });
 </script>
 </body>
 </html>
-

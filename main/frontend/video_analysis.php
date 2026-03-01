@@ -1,28 +1,22 @@
 <?php
 declare(strict_types=1);
 
-/**
- * Video analysis page frontend
- * Displays video upload form and analysis results
- */
+
 
 require_once __DIR__ . '/../../user/backend/require_auth.php';
 require_once __DIR__ . '/../../user/backend/bootstrap.php';
 require_once __DIR__ . '/../../includes/i18n.php';
 require_once __DIR__ . '/../../includes/header.php';
 
-// Get messages from session
 $error = $_SESSION['analysis_error'] ?? null;
 $success = $_SESSION['analysis_success'] ?? null;
 $result = $_SESSION['analysis_result'] ?? null;
 
 unset($_SESSION['analysis_error'], $_SESSION['analysis_success'], $_SESSION['analysis_result']);
 
-// Get analysis history from database
 $userId = (int)$authUser['id'];
 $history = [];
 try {
-    // Create table if it doesn't exist (using BIGINT to match users.id)
     $pdo->exec("CREATE TABLE IF NOT EXISTS video_analyses (
         id INT AUTO_INCREMENT PRIMARY KEY,
         user_id BIGINT UNSIGNED NOT NULL,
@@ -39,12 +33,11 @@ try {
         INDEX idx_created_at (created_at),
         INDEX idx_session_id (session_id)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci");
-    
+
     $stmt = $pdo->prepare('SELECT id, video_name, video_path, techniques_detected, score, status, session_id, coaching_feedback, created_at FROM video_analyses WHERE user_id = ? ORDER BY created_at DESC LIMIT 50');
     $stmt->execute([$userId]);
     $history = $stmt->fetchAll();
-    
-    // Decode JSON techniques and coaching feedback
+
     foreach ($history as &$item) {
         $item['techniques_detected'] = json_decode($item['techniques_detected'] ?? '[]', true) ?: [];
         if (!empty($item['coaching_feedback'])) {
@@ -52,12 +45,10 @@ try {
             if (json_last_error() === JSON_ERROR_NONE) {
                 $item['coaching_feedback'] = $coaching;
             }
-            // If not JSON, keep as string
         }
     }
 } catch (PDOException $e) {
     error_log("Error loading video analysis history: " . $e->getMessage());
-    // If table doesn't exist yet, history will be empty
     $history = [];
 }
 ?>
@@ -422,7 +413,7 @@ try {
         background: #f0fdf4;
         color: #166534;
     }
-    /* Chat Interface Styles - Modern Chat Box Design */
+
     .chat-container {
         display: flex;
         flex-direction: column;
@@ -463,13 +454,13 @@ try {
         align-items: flex-start;
     }
     @keyframes slideIn {
-        from { 
-            opacity: 0; 
-            transform: translateY(15px) scale(0.95); 
+        from {
+            opacity: 0;
+            transform: translateY(15px) scale(0.95);
         }
-        to { 
-            opacity: 1; 
-            transform: translateY(0) scale(1); 
+        to {
+            opacity: 1;
+            transform: translateY(0) scale(1);
         }
     }
     .chat-message-user {
@@ -747,7 +738,7 @@ try {
                         <?php echo htmlspecialchars(t('select_technique_hint'), ENT_QUOTES, 'UTF-8'); ?>
                     </p>
                 </div>
-                
+
                 <div class="file-upload-area" id="uploadArea">
                     <div class="upload-icon">
                         <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
@@ -776,11 +767,11 @@ try {
             <div class="result-section animate-on-scroll fade-in-up">
             <div class="result-header">
                 <h2 class="result-title"><?php echo htmlspecialchars(t('analysis_results'), ENT_QUOTES, 'UTF-8'); ?></h2>
-                <span class="model-status <?php 
-                    echo ($result['status'] === 'completed') ? 'status-working' : 
-                         (($result['status'] === 'api_unavailable' || $result['status'] === 'api_error' || $result['status'] === 'analysis_failed') ? 'status-not-working' : 'status-not-working'); 
+                <span class="model-status <?php
+                    echo ($result['status'] === 'completed') ? 'status-working' :
+                         (($result['status'] === 'api_unavailable' || $result['status'] === 'api_error' || $result['status'] === 'analysis_failed') ? 'status-not-working' : 'status-not-working');
                 ?>">
-                    <?php 
+                    <?php
                     if ($result['status'] === 'completed') {
                         echo htmlspecialchars(t('analysis_completed'), ENT_QUOTES, 'UTF-8');
                     } elseif ($result['status'] === 'analysis_failed') {
@@ -804,7 +795,7 @@ try {
                         </svg>
                     </div>
                     <h3 style="font-size: 20px; color: #1e293b; margin-bottom: 12px; font-weight: 600;">
-                        <?php 
+                        <?php
                         if ($result['status'] === 'analysis_failed') {
                             echo htmlspecialchars(t('analysis_failed'), ENT_QUOTES, 'UTF-8');
                         } elseif ($result['status'] === 'api_unavailable') {
@@ -817,11 +808,11 @@ try {
                         ?>
                     </h3>
                     <p style="max-width: 500px; margin: 0 auto; color: #475569; font-weight: 500;">
-                        <?php 
+                        <?php
                         if ($result['status'] === 'analysis_failed') {
                             echo htmlspecialchars(t('analysis_failed_desc') ?? 'Video uploaded but analysis failed. Please check debug information below.', ENT_QUOTES, 'UTF-8');
                         } elseif ($result['status'] === 'api_unavailable') {
-                            echo htmlspecialchars(t('api_unavailable_desc') ?? 'Analysis service is currently unavailable. Please ensure the ChatBox/run_analysis.py file exists.', ENT_QUOTES, 'UTF-8');
+                            echo htmlspecialchars(t('api_unavailable_desc') ?? 'Analysis service is currently unavailable. Please ensure the chatbot_newest/chatbot/back_end/run_analysis.py file exists.', ENT_QUOTES, 'UTF-8');
                         } elseif ($result['status'] === 'api_error') {
                             echo htmlspecialchars(t('api_error_desc') ?? 'Error running analysis service. Please check server logs for details.', ENT_QUOTES, 'UTF-8');
                         } else {
@@ -911,7 +902,7 @@ try {
                                 <?php echo htmlspecialchars(t('online'), ENT_QUOTES, 'UTF-8'); ?>
                             </div>
                         </div>
-                        
+
                         <div class="chat-messages" id="chatMessages">
                             <!-- Initial Analysis Result Message -->
                             <div class="chat-message chat-message-assistant">
@@ -927,14 +918,11 @@ try {
                                     </div>
                                     <div class="chat-text">
                                         <?php if (!empty($result['coaching_feedback'])): ?>
-                                            <?php 
-                                            // Decode coaching_feedback properly
+                                            <?php
                                             $coachingFeedback = $result['coaching_feedback'];
                                             if (is_string($coachingFeedback)) {
-                                                // Try to decode JSON if it's a JSON string
                                                 $decoded = json_decode($coachingFeedback, true);
                                                 if (json_last_error() === JSON_ERROR_NONE && is_array($decoded)) {
-                                                    // If it's an array, extract text or convert to readable format
                                                     if (isset($decoded['text'])) {
                                                         $feedback = $decoded['text'];
                                                     } elseif (isset($decoded['feedback'])) {
@@ -948,7 +936,6 @@ try {
                                                     $feedback = $coachingFeedback; // Keep as string
                                                 }
                                             } elseif (is_array($coachingFeedback)) {
-                                                // If already an array, extract text or convert to readable format
                                                 if (isset($coachingFeedback['text'])) {
                                                     $feedback = $coachingFeedback['text'];
                                                 } elseif (isset($coachingFeedback['feedback'])) {
@@ -961,12 +948,12 @@ try {
                                             } else {
                                                 $feedback = (string)$coachingFeedback;
                                             }
-                                            echo nl2br(htmlspecialchars($feedback, ENT_QUOTES, 'UTF-8')); 
+                                            echo nl2br(htmlspecialchars($feedback, ENT_QUOTES, 'UTF-8'));
                                             ?>
                                         <?php else: ?>
                                             <?php echo htmlspecialchars(t('analysis_completed'), ENT_QUOTES, 'UTF-8'); ?>
                                         <?php endif; ?>
-                                        
+
                                         <?php if (!empty($result['feedback']) && is_array($result['feedback'])): ?>
                                             <div style="margin-top: 12px; padding: 12px 14px; background: rgba(59, 130, 246, 0.06); border-radius: 12px; border-left: 3px solid #3b82f6;">
                                                 <div style="font-weight: 600; color: #1e293b; margin-bottom: 10px; font-size: 13px; display: flex; align-items: center; gap: 6px;">
@@ -993,7 +980,7 @@ try {
                                 </div>
                             </div>
                         </div>
-                        
+
                         <!-- Chat Suggestions -->
                         <div class="chat-suggestions" id="chatSuggestions">
                             <div class="suggestion-title"><?php echo htmlspecialchars(t('suggested_questions'), ENT_QUOTES, 'UTF-8'); ?>:</div>
@@ -1024,13 +1011,13 @@ try {
                                 </button>
                             </div>
                         </div>
-                        
+
                         <!-- Chat Input -->
                         <div class="chat-input-container">
                             <div class="chat-input-wrapper">
-                                <textarea 
-                                    id="chatInput" 
-                                    class="chat-input" 
+                                <textarea
+                                    id="chatInput"
+                                    class="chat-input"
                                     placeholder="<?php echo htmlspecialchars(t('type_your_question'), ENT_QUOTES, 'UTF-8'); ?>"
                                     rows="1"
                                 ></textarea>
@@ -1051,7 +1038,7 @@ try {
             <div class="history-header">
                 <h2 class="history-title"><?php echo htmlspecialchars(t('analysis_history'), ENT_QUOTES, 'UTF-8'); ?></h2>
             </div>
-            
+
             <?php if (empty($history)): ?>
                 <div class="empty-state">
                     <div class="empty-state-icon">
@@ -1079,7 +1066,7 @@ try {
                                     <?php echo htmlspecialchars(date('M d, Y H:i', strtotime($item['created_at'])), ENT_QUOTES, 'UTF-8'); ?>
                                 </div>
                             </div>
-                            
+
                             <?php if (!empty($item['techniques_detected'])): ?>
                                 <div class="history-techniques">
                                     <?php foreach ($item['techniques_detected'] as $technique): ?>
@@ -1089,7 +1076,7 @@ try {
                             <?php else: ?>
                                 <div class="no-techniques"><?php echo htmlspecialchars(t('no_techniques'), ENT_QUOTES, 'UTF-8'); ?></div>
                             <?php endif; ?>
-                            
+
                             <div class="history-status <?php echo $item['status'] === 'model_not_working' ? 'status-model-not-working' : 'status-completed'; ?>">
                                 <?php echo $item['status'] === 'model_not_working' ? htmlspecialchars(t('model_not_working'), ENT_QUOTES, 'UTF-8') : htmlspecialchars(t('model_active'), ENT_QUOTES, 'UTF-8'); ?>
                             </div>
@@ -1103,7 +1090,6 @@ try {
 
 <script src="/pickelball/main/frontend/js/scroll-animation.js"></script>
 <script>
-// Chat functionality
 const chatContainer = document.getElementById('chatContainer');
 const chatMessages = document.getElementById('chatMessages');
 const chatInput = document.getElementById('chatInput');
@@ -1112,49 +1098,42 @@ const chatSuggestions = document.getElementById('chatSuggestions');
 
 if (chatContainer) {
     const sessionId = chatContainer.dataset.sessionId;
-    
-    // Auto-resize textarea
+
     chatInput.addEventListener('input', function() {
         this.style.height = 'auto';
         this.style.height = Math.min(this.scrollHeight, 120) + 'px';
     });
-    
-    // Send on Enter (Shift+Enter for new line)
+
     chatInput.addEventListener('keydown', function(e) {
         if (e.key === 'Enter' && !e.shiftKey) {
             e.preventDefault();
             sendChatMessage();
         }
     });
-    
+
     function sendSuggestion(text) {
         chatInput.value = text;
         chatInput.style.height = 'auto';
         sendChatMessage();
     }
-    
+
     function sendChatMessage() {
         const message = chatInput.value.trim();
         if (!message || !sessionId) return;
-        
-        // Add user message to chat
+
         addChatMessage(message, 'user');
         chatInput.value = '';
         chatInput.style.height = 'auto';
-        
-        // Hide suggestions after first message
+
         if (chatSuggestions) {
             chatSuggestions.style.display = 'none';
         }
-        
-        // Show loading
+
         const loadingId = addLoadingMessage();
-        
-        // Disable input
+
         chatInput.disabled = true;
         chatSendBtn.disabled = true;
-        
-        // Send to backend
+
         fetch('/pickelball/main/backend/chat_handler.php', {
             method: 'POST',
             headers: {
@@ -1167,7 +1146,6 @@ if (chatContainer) {
         })
         .then(response => {
             if (!response.ok) {
-                // If HTTP error, try to get error message from response
                 return response.text().then(text => {
                     try {
                         const errorData = JSON.parse(text);
@@ -1181,13 +1159,11 @@ if (chatContainer) {
         })
         .then(data => {
             removeLoadingMessage(loadingId);
-            
+
             if (data && data.success && data.response) {
                 addChatMessage(data.response, 'assistant');
             } else if (data && data.error) {
-                // Show error but also provide helpful message
                 console.error('Chat error:', data.error);
-                // Try to provide a helpful response based on the question
                 const question = message.toLowerCase();
                 let fallbackResponse = '';
                 if (question.includes('improve') || question.includes('better')) {
@@ -1204,7 +1180,6 @@ if (chatContainer) {
                 addChatMessage(fallbackResponse, 'assistant');
             } else {
                 console.error('Unexpected response format:', data);
-                // Provide helpful fallback based on question
                 const question = message.toLowerCase();
                 let fallbackResponse = 'Thank you for your question! Based on the analysis, I recommend focusing on the key areas mentioned in the feedback. Practice 15-30 minutes daily for best results.';
                 if (question.includes('improve') || question.includes('better')) {
@@ -1216,7 +1191,6 @@ if (chatContainer) {
         .catch(error => {
             removeLoadingMessage(loadingId);
             console.error('Chat error:', error);
-            // Provide helpful fallback message based on question
             const question = message.toLowerCase();
             let fallbackResponse = 'Thank you for your question! Based on the analysis, I recommend focusing on the key areas mentioned in the feedback. Practice 15-30 minutes daily for best results.';
             if (question.includes('improve') || question.includes('better')) {
@@ -1236,21 +1210,21 @@ if (chatContainer) {
             chatInput.focus();
         });
     }
-    
+
     function addChatMessage(text, role) {
         const messageDiv = document.createElement('div');
         messageDiv.className = `chat-message chat-message-${role}`;
-        
+
         const time = new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
         const name = role === 'user' ? '<?php echo htmlspecialchars(t('you'), ENT_QUOTES, 'UTF-8'); ?>' : '<?php echo htmlspecialchars(t('ai_coach'), ENT_QUOTES, 'UTF-8'); ?>';
-        
+
         let avatarSvg = '';
         if (role === 'assistant') {
             avatarSvg = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>';
         } else {
             avatarSvg = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>';
         }
-        
+
         messageDiv.innerHTML = `
             <div class="chat-avatar">${avatarSvg}</div>
             <div class="chat-content">
@@ -1261,16 +1235,16 @@ if (chatContainer) {
                 <div class="chat-text">${escapeHtml(text).replace(/\n/g, '<br>')}</div>
             </div>
         `;
-        
+
         chatMessages.appendChild(messageDiv);
         chatMessages.scrollTop = chatMessages.scrollHeight;
     }
-    
+
     function addLoadingMessage() {
         const messageDiv = document.createElement('div');
         messageDiv.className = 'chat-message chat-message-assistant';
         messageDiv.id = 'loading-message';
-        
+
         messageDiv.innerHTML = `
             <div class="chat-avatar">
                 <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
@@ -1286,32 +1260,30 @@ if (chatContainer) {
                 </div>
             </div>
         `;
-        
+
         chatMessages.appendChild(messageDiv);
         chatMessages.scrollTop = chatMessages.scrollHeight;
         return 'loading-message';
     }
-    
+
     function removeLoadingMessage(id) {
         const loadingMsg = document.getElementById(id);
         if (loadingMsg) {
             loadingMsg.remove();
         }
     }
-    
+
     function escapeHtml(text) {
         const div = document.createElement('div');
         div.textContent = text;
         return div.innerHTML;
     }
-    
-    // Scroll to bottom on load
+
     setTimeout(() => {
         chatMessages.scrollTop = chatMessages.scrollHeight;
     }, 100);
 }
 
-// File upload handling
 const uploadArea = document.getElementById('uploadArea');
 const videoInput = document.getElementById('videoInput');
 const selectedFile = document.getElementById('selectedFile');
@@ -1319,12 +1291,10 @@ const fileName = document.getElementById('fileName');
 const fileSize = document.getElementById('fileSize');
 const submitBtn = document.getElementById('submitBtn');
 
-// Click to select file
 uploadArea.addEventListener('click', () => {
     videoInput.click();
 });
 
-// Drag and drop handling
 uploadArea.addEventListener('dragover', (e) => {
     e.preventDefault();
     uploadArea.classList.add('dragover');
@@ -1337,14 +1307,13 @@ uploadArea.addEventListener('dragleave', () => {
 uploadArea.addEventListener('drop', (e) => {
     e.preventDefault();
     uploadArea.classList.remove('dragover');
-    
+
     if (e.dataTransfer.files.length > 0) {
         videoInput.files = e.dataTransfer.files;
         handleFileSelect();
     }
 });
 
-// File input change
 videoInput.addEventListener('change', handleFileSelect);
 
 function handleFileSelect() {
@@ -1373,4 +1342,3 @@ function formatFileSize(bytes) {
 </script>
 
 <?php require_once __DIR__ . '/../../includes/footer.php'; ?>
-

@@ -1,7 +1,4 @@
-/**
- * Dark Theme Styles
- * Applied when body or html has class 'theme-dark' or data-theme='dark'
- */
+
 
 html[data-theme="dark"],
 html.theme-dark,
@@ -18,13 +15,13 @@ html.theme-dark body {
     background-color: #0f172a !important;
 }
 
-/* Override all white backgrounds */
+
 body.theme-dark,
 body.theme-dark html {
     background-color: #0f172a !important;
 }
 
-/* Main sections - force dark background */
+
 html[data-theme="dark"] .video-analysis-section,
 html.theme-dark .video-analysis-section,
 body.theme-dark .video-analysis-section,
@@ -137,7 +134,7 @@ body.theme-dark .btn-login:hover {
     background: #059669;
 }
 
-/* Card backgrounds */
+
 html[data-theme="dark"] .auth-card,
 html.theme-dark .auth-card,
 body.theme-dark .auth-card,
@@ -171,7 +168,7 @@ body[data-theme="dark"] .practice-card {
     color: #e2e8f0 !important;
 }
 
-/* Text colors */
+
 body.theme-dark h1,
 body.theme-dark h2,
 body.theme-dark h3,
@@ -188,7 +185,7 @@ body.theme-dark .card-content {
     color: #cbd5e1;
 }
 
-/* Input fields */
+
 body.theme-dark input[type="text"],
 body.theme-dark input[type="email"],
 body.theme-dark input[type="password"],
@@ -206,7 +203,7 @@ body.theme-dark select:focus {
     background: #1e293b;
 }
 
-/* Buttons */
+
 body.theme-dark .btn-primary,
 body.theme-dark .btn-secondary,
 body.theme-dark .submit-btn,
@@ -215,7 +212,7 @@ body.theme-dark .save-btn {
     color: #ffffff;
 }
 
-/* Option items */
+
 body.theme-dark .option-item {
     background: #0f172a;
     border-color: #334155;
@@ -235,7 +232,7 @@ body.theme-dark .option-subtext {
     color: #94a3b8;
 }
 
-/* History items */
+
 body.theme-dark .history-item {
     background: #0f172a;
     border-color: #334155;
@@ -253,7 +250,7 @@ body.theme-dark .history-date {
     color: #94a3b8;
 }
 
-/* File upload area */
+
 body.theme-dark .file-upload-area {
     background: #0f172a;
     border-color: #334155;
@@ -265,7 +262,7 @@ body.theme-dark .file-upload-area.dragover {
     border-color: #10b981;
 }
 
-/* Alerts */
+
 body.theme-dark .alert-error {
     background: #7f1d1d;
     border-color: #991b1b;
@@ -278,7 +275,7 @@ body.theme-dark .alert-success {
     color: #bbf7d0;
 }
 
-/* Footer */
+
 body.theme-dark .footer {
     background: #1e293b;
     border-top-color: #334155;
@@ -293,7 +290,7 @@ body.theme-dark .footer a:hover {
     color: #10b981;
 }
 
-/* Index page sections - use multiple selectors for higher specificity */
+
 html[data-theme="dark"] .features,
 html.theme-dark .features,
 body.theme-dark .features,
@@ -302,7 +299,7 @@ body[data-theme="dark"] .features {
     background-color: #0f172a !important;
 }
 
-/* Techniques section */
+
 html[data-theme="dark"] .techniques,
 html.theme-dark .techniques,
 body.theme-dark .techniques,
@@ -311,7 +308,7 @@ body[data-theme="dark"] .techniques {
     background-color: #0f172a !important;
 }
 
-/* Technique cards */
+
 html[data-theme="dark"] .technique-card,
 html.theme-dark .technique-card,
 body.theme-dark .technique-card,
@@ -387,7 +384,7 @@ body[data-theme="dark"] .feature-list li {
     color: #cbd5e1 !important;
 }
 
-/* General background overrides */
+
 html[data-theme="dark"] section:not(.hero):not(.action-prediction-section),
 html.theme-dark section:not(.hero):not(.action-prediction-section),
 body.theme-dark section:not(.hero):not(.action-prediction-section),
@@ -412,7 +409,7 @@ body[data-theme="dark"] .techniques-container {
     background-color: transparent !important;
 }
 
-/* Techniques section */
+
 html[data-theme="dark"] .techniques,
 html.theme-dark .techniques,
 body.theme-dark .techniques,
@@ -421,7 +418,7 @@ body[data-theme="dark"] .techniques {
     background-color: #0f172a !important;
 }
 
-/* Technique cards */
+
 html[data-theme="dark"] .technique-card,
 html.theme-dark .technique-card,
 body.theme-dark .technique-card,
@@ -453,7 +450,7 @@ body[data-theme="dark"] .technique-card p {
     color: #cbd5e1 !important;
 }
 
-/* Feature items in dark mode */
+
 html[data-theme="dark"] .feature-text h3,
 html.theme-dark .feature-text h3,
 body.theme-dark .feature-text h3,
@@ -475,7 +472,7 @@ body[data-theme="dark"] .feature-list li {
     color: #cbd5e1 !important;
 }
 
-/* CTA section in dark mode */
+
 html[data-theme="dark"] .cta-section,
 html.theme-dark .cta-section,
 body.theme-dark .cta-section,
@@ -497,7 +494,7 @@ body[data-theme="dark"] .cta-section p {
     color: #f0fdf4 !important;
 }
 
-/* Video Analysis Page - Dark Mode */
+
 html[data-theme="dark"] .video-analysis-section,
 html.theme-dark .video-analysis-section,
 body.theme-dark .video-analysis-section,
@@ -506,7 +503,7 @@ body[data-theme="dark"] .video-analysis-section {
     background-color: #0f172a !important;
 }
 
-/* Action Prediction Page - Dark Mode */
+
 html[data-theme="dark"] .action-prediction-section,
 html.theme-dark .action-prediction-section,
 body.theme-dark .action-prediction-section,
@@ -747,7 +744,7 @@ body[data-theme="dark"] .selected-file {
     border-color: #334155 !important;
 }
 
-/* Inline styles override for dark mode */
+
 html[data-theme="dark"] [style*="color: #0f172a"],
 html.theme-dark [style*="color: #0f172a"],
 body.theme-dark [style*="color: #0f172a"],
@@ -778,12 +775,12 @@ body[data-theme="dark"] [style*="color: #334155"] strong {
     color: #ffffff !important;
 }
 
-/* Force override inline styles and other backgrounds */
+
 body.theme-dark * {
     transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
 }
 
-/* Override any white/light backgrounds - but exclude action-prediction-section */
+
 body.theme-dark [style*="background: #ffffff"]:not(.action-prediction-section):not(.action-prediction-section *),
 body.theme-dark [style*="background:#ffffff"]:not(.action-prediction-section):not(.action-prediction-section *),
 body.theme-dark [style*="background: white"]:not(.action-prediction-section):not(.action-prediction-section *),
@@ -793,13 +790,13 @@ body.theme-dark [style*="background-color:#ffffff"]:not(.action-prediction-secti
     background-color: #1e293b !important;
 }
 
-/* Ensure body and html are dark */
+
 html body.theme-dark {
     background: #0f172a !important;
     background-color: #0f172a !important;
 }
 
-/* Chat Interface Dark Mode */
+
 html[data-theme="dark"] .chat-container,
 html.theme-dark .chat-container {
     background: #1e293b !important;
@@ -884,4 +881,3 @@ html[data-theme="dark"] .chat-input::placeholder,
 html.theme-dark .chat-input::placeholder {
     color: #64748b !important;
 }
-

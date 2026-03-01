@@ -1,22 +1,17 @@
 <?php
 declare(strict_types=1);
 
-/**
- * Registration backend handler
- * Processes registration form, creates user account, and sends OTP
- */
+
 
 require __DIR__ . '/bootstrap.php';
 $config = require __DIR__ . '/config.php';
 require __DIR__ . '/mailer.php';
 
-// Only accept POST requests
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     header('Location: ../frontend/register.php');
     exit;
 }
 
-// Validate reCAPTCHA response
 $captchaResponse = $_POST['g-recaptcha-response'] ?? '';
 
 if ($captchaResponse === '') {
@@ -26,7 +21,6 @@ if ($captchaResponse === '') {
     exit;
 }
 
-// Verify reCAPTCHA with Google's API
 $captchaPayload = http_build_query([
     'secret' => $config['recaptcha_secret_key'],
     'response' => $captchaResponse,
@@ -52,7 +46,6 @@ if (!$captchaResult || ($captchaResult['success'] ?? false) !== true) {
     exit;
 }
 
-// Validate and sanitize form inputs
 $email = filter_input(INPUT_POST, 'email', FILTER_VALIDATE_EMAIL);
 $name = trim((string)($_POST['name'] ?? ''));
 $password = $_POST['password'] ?? '';
@@ -63,28 +56,24 @@ $_SESSION['register_form'] = [
     'name' => $name,
 ];
 
-// Validate all required fields
 if (!$email || $name === '' || $password === '' || $confirmPassword === '') {
     $_SESSION['register_error'] = 'Please fill in all required information.';
     header('Location: ../frontend/register.php');
     exit;
 }
 
-// Validate password length
 if (strlen($password) < 8) {
     $_SESSION['register_error'] = 'Password must be at least 8 characters.';
     header('Location: ../frontend/register.php');
     exit;
 }
 
-// Validate password confirmation
 if ($password !== $confirmPassword) {
     $_SESSION['register_error'] = 'Passwords do not match.';
     header('Location: ../frontend/register.php');
     exit;
 }
 
-// Check if email already exists (allow pending accounts to re-register)
 $pdo->beginTransaction();
 
 $statement = $pdo->prepare('SELECT id, status, auth_provider FROM users WHERE email = ? LIMIT 1');
@@ -98,11 +87,9 @@ if ($existing && $existing['status'] !== 'pending') {
     exit;
 }
 
-// Hash password and set default role
 $passwordHash = password_hash($password, PASSWORD_DEFAULT);
 $role = 'player';
 
-// Update existing pending user or create new user
 if ($existing) {
     $pdo->prepare('UPDATE users SET display_name = ?, password_hash = ?, role = ?, status = ?, auth_provider = ?, updated_at = NOW() WHERE id = ?')->execute([
         $name,
@@ -128,7 +115,6 @@ if ($existing) {
 
 $pdo->commit();
 
-// Generate and send OTP code
 $otpLifetime = (int)($config['otp']['lifetime_seconds'] ?? 300);
 $otpCode = (string)random_int(100000, 999999);
 
@@ -138,7 +124,6 @@ if (!sendOtpMail($config, $email, $otpCode, 'register')) {
     exit;
 }
 
-// Store pending registration in session for OTP verification
 $_SESSION['pending_registration'] = [
     'user_id' => $userId,
     'email' => $email,
@@ -152,7 +137,5 @@ $_SESSION['pending_registration'] = [
 unset($_SESSION['register_form'], $_SESSION['register_error']);
 $_SESSION['register_notice'] = 'A verification code has been sent to your email.';
 
-// Redirect to verification page
 header('Location: ../frontend/verify.php');
 exit;
-

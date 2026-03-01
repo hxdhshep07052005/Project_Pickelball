@@ -1,10 +1,7 @@
 <?php
 declare(strict_types=1);
 
-/**
- * OTP verification page frontend
- * Displays OTP input form for login, registration, or password change verification
- */
+
 
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
@@ -12,7 +9,6 @@ if (session_status() === PHP_SESSION_NONE) {
 
 require __DIR__ . '/../backend/session.php';
 
-// Determine verification type from session (login, registration, or password_change)
 $pending = null;
 $verifyType = 'login';
 $pageTitle = 'Verify Code - Pickleball Training';
@@ -22,7 +18,6 @@ $cancelLink = '../backend/logout.php';
 $cancelText = 'Cancel sign-in';
 
 if (isset($_SESSION['pending_password_change'])) {
-    // Password change verification
     $pending = $_SESSION['pending_password_change'];
     $verifyType = 'password_change';
     $pageTitle = 'Verify Password Change - Pickleball Training';
@@ -32,7 +27,6 @@ if (isset($_SESSION['pending_password_change'])) {
     $cancelText = 'Cancel';
     require __DIR__ . '/../backend/require_auth.php'; // Require authentication
 } elseif (isset($_SESSION['pending_registration'])) {
-    // Registration verification
     $pending = $_SESSION['pending_registration'];
     $verifyType = 'registration';
     $pageTitle = 'Verify Registration - Pickleball Training';
@@ -41,12 +35,10 @@ if (isset($_SESSION['pending_password_change'])) {
     $cancelLink = 'login.php';
     $cancelText = 'Cancel registration';
 } elseif (isset($_SESSION['pending_login'])) {
-    // Login verification
     $pending = $_SESSION['pending_login'];
     $verifyType = 'login';
 }
 
-// Redirect if no pending verification session
 if (!$pending) {
     if ($verifyType === 'password_change') {
         $_SESSION['password_change_error'] = 'Verification session has expired. Please try again.';
@@ -57,7 +49,6 @@ if (!$pending) {
     exit;
 }
 
-// Get messages
 $notice = null;
 $error = null;
 
@@ -275,16 +266,16 @@ require __DIR__ . '/../../includes/header.php';
             <form method="post" action="../backend/verify.php" autocomplete="off" class="auth-form" id="otp-form">
                 <div class="form-group">
                     <label for="code" class="form-label">Verification Code</label>
-                    <input 
-                        type="text" 
-                        id="code" 
-                        name="code" 
-                        maxlength="6" 
-                        pattern="\d{6}" 
-                        inputmode="numeric" 
-                        required 
-                        class="otp-input" 
-                        placeholder="000000" 
+                    <input
+                        type="text"
+                        id="code"
+                        name="code"
+                        maxlength="6"
+                        pattern="\d{6}"
+                        inputmode="numeric"
+                        required
+                        class="otp-input"
+                        placeholder="000000"
                         autofocus
                     >
                     <p class="otp-hint">Enter the 6-digit code</p>
@@ -302,20 +293,17 @@ require __DIR__ . '/../../includes/header.php';
 <script>
 document.addEventListener('DOMContentLoaded', () => {
     const otpInput = document.getElementById('code');
-    
-    // Auto-format: only allow digits
+
     otpInput.addEventListener('input', (e) => {
         e.target.value = e.target.value.replace(/\D/g, '');
     });
-    
-    // Auto-submit when 6 digits are entered
+
     otpInput.addEventListener('input', (e) => {
         if (e.target.value.length === 6) {
             document.getElementById('otp-form').submit();
         }
     });
-    
-    // Focus on input
+
     otpInput.focus();
 });
 </script>

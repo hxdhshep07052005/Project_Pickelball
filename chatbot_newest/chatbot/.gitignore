@@ -1,0 +1,38 @@
+.DS_Store
+Thumbs.db
+
+# Python cache/build
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# IDE/editor
+.idea/
+.vscode/
+
+# Local environment files
+.env
+.env.*
+!.env.example
+
+# Runtime/generated data (do not ship to repo)
+data/video/
+data/frame/
+data/pose/
+data/vision_llm/
+data/combined/
+data/phase/
+data/feedback/
+
+# Logs
+*.log

@@ -1,39 +1,32 @@
 <?php
 declare(strict_types=1);
 
-/**
- * Admin Video Analyses Management page
- * List and manage video analysis records
- */
+
 
 require __DIR__ . '/../backend/require_auth.php';
 
 $admin = $_SESSION['admin'];
 
-// Pagination
 $page = isset($_GET['page']) ? max(1, (int)$_GET['page']) : 1;
 $limit = 20;
 $offset = ($page - 1) * $limit;
 
-// Get analyses
 $analyses = [];
 $totalAnalyses = 0;
 $totalPages = 1;
 
 try {
-    // Count total
     $countStmt = $pdo->query('SELECT COUNT(*) as count FROM video_analyses');
     $totalAnalyses = (int)$countStmt->fetch()['count'];
-    
-    // Get analyses with user info
-    $query = 'SELECT va.id, va.user_id, u.email, u.display_name, va.video_name, va.video_path, va.score, va.status, va.created_at 
-              FROM video_analyses va 
-              LEFT JOIN users u ON va.user_id = u.id 
+
+    $query = 'SELECT va.id, va.user_id, u.email, u.display_name, va.video_name, va.video_path, va.score, va.status, va.created_at
+              FROM video_analyses va
+              LEFT JOIN users u ON va.user_id = u.id
               ORDER BY va.created_at DESC LIMIT ? OFFSET ?';
     $stmt = $pdo->prepare($query);
     $stmt->execute([$limit, $offset]);
     $analyses = $stmt->fetchAll();
-    
+
     $totalPages = max(1, (int)ceil($totalAnalyses / $limit));
 } catch (PDOException $e) {
     error_log("Video analyses page error: " . $e->getMessage());
@@ -355,12 +348,12 @@ try {
     <div class="page-header">
         <h2>Video Analyses</h2>
     </div>
-    
+
     <div class="stat-card">
         <h3>Total Video Analyses</h3>
         <div class="value"><?php echo number_format($totalAnalyses); ?></div>
     </div>
-    
+
     <div class="table-container">
         <table>
             <thead>
@@ -404,13 +397,13 @@ try {
             </tbody>
         </table>
     </div>
-    
+
     <?php if ($totalPages > 1): ?>
         <div class="pagination">
             <?php if ($page > 1): ?>
                 <a href="?page=<?php echo $page - 1; ?>">Previous</a>
             <?php endif; ?>
-            
+
             <?php for ($i = max(1, $page - 2); $i <= min($totalPages, $page + 2); $i++): ?>
                 <?php if ($i == $page): ?>
                     <span class="current"><?php echo $i; ?></span>
@@ -418,7 +411,7 @@ try {
                     <a href="?page=<?php echo $i; ?>"><?php echo $i; ?></a>
                 <?php endif; ?>
             <?php endfor; ?>
-            
+
             <?php if ($page < $totalPages): ?>
                 <a href="?page=<?php echo $page + 1; ?>">Next</a>
             <?php endif; ?>
@@ -461,7 +454,7 @@ function viewVideo(id) {
             if (data.success) {
                 const video = data.video;
                 const modalBody = document.getElementById('modalBody');
-                
+
                 let html = `
                     <div class="detail-section">
                         <h3>Basic Information</h3>
@@ -495,7 +488,7 @@ function viewVideo(id) {
                         </div>
                     </div>
                 `;
-                
+
                 if (video.techniques_detected && video.techniques_detected.length > 0) {
                     html += `
                         <div class="detail-section">
@@ -504,7 +497,7 @@ function viewVideo(id) {
                         </div>
                     `;
                 }
-                
+
                 if (video.coaching_feedback) {
                     html += `
                         <div class="detail-section">
@@ -513,7 +506,7 @@ function viewVideo(id) {
                         </div>
                     `;
                 }
-                
+
                 if (video.raw_feedback) {
                     html += `
                         <div class="detail-section">
@@ -522,7 +515,7 @@ function viewVideo(id) {
                         </div>
                     `;
                 }
-                
+
                 modalBody.innerHTML = html;
                 document.getElementById('videoModal').classList.add('active');
             } else {
@@ -539,7 +532,7 @@ function deleteVideo(id) {
     if (!confirm('Are you sure you want to delete this video? This action cannot be undone.')) {
         return;
     }
-    
+
     fetch('../backend/delete_video.php', {
         method: 'POST',
         headers: {
@@ -567,14 +560,14 @@ function playVideo(videoPath) {
         alert('Video path not available');
         return;
     }
-    
+
     const videoPlayer = document.getElementById('videoPlayer');
     const videoPlayerInfo = document.getElementById('videoPlayerInfo');
     const videoName = videoPath.split('/').pop();
-    
+
     videoPlayer.src = videoPath;
     videoPlayerInfo.innerHTML = `<strong>Video:</strong> ${escapeHtml(videoName)}`;
-    
+
     document.getElementById('videoPlayerModal').classList.add('active');
 }
 
@@ -595,7 +588,6 @@ function escapeHtml(text) {
     return div.innerHTML;
 }
 
-// Close modal when clicking outside
 document.getElementById('videoModal').addEventListener('click', function(e) {
     if (e.target === this) {
         closeModal();
@@ -611,4 +603,3 @@ document.getElementById('videoPlayerModal').addEventListener('click', function(e
 
 </body>
 </html>
-

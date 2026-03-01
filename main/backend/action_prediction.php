@@ -1,34 +1,26 @@
 <?php
-/**
- * Backend handler for action video prediction
- * Uses trained LSTM model to predict DriveBackhand or DriveForehand
- */
 
-// Disable error display, log errors instead
+
 ini_set('display_errors', 0);
 error_reporting(E_ALL);
 ini_set('log_errors', 1);
 
-// Set JSON header immediately
 header('Content-Type: application/json; charset=utf-8');
 
-// Start output buffering to catch any unexpected output
 ob_start();
 
 try {
     session_start();
-    
-    // Load bootstrap first for database connection
+
     require_once __DIR__ . '/../../user/backend/bootstrap.php';
-    
-    // Check authentication manually (require_auth.php redirects, which doesn't work for JSON API)
+
     if (!isset($_SESSION['user']) || empty($_SESSION['user'])) {
         ob_end_clean();
         http_response_code(401);
         echo json_encode(['success' => false, 'error' => 'Unauthorized. Please log in.'], JSON_UNESCAPED_UNICODE);
         exit;
     }
-    
+
     $authUser = $_SESSION['user'];
 } catch (Exception $e) {
     ob_end_clean();
@@ -42,7 +34,6 @@ try {
     exit;
 }
 
-// Only handle POST requests
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     ob_end_clean();
     http_response_code(405);
@@ -50,7 +41,6 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit;
 }
 
-// Handle file upload
 if (!isset($_FILES['video']) || $_FILES['video']['error'] !== UPLOAD_ERR_OK) {
     ob_end_clean();
     $uploadError = $_FILES['video']['error'] ?? 'Unknown error';
@@ -73,7 +63,6 @@ $file = $_FILES['video'];
 $allowedTypes = ['video/mp4', 'video/avi', 'video/quicktime', 'video/x-msvideo'];
 $maxSize = 100 * 1024 * 1024; // 100MB
 
-// Validate file type
 try {
     $finfo = finfo_open(FILEINFO_MIME_TYPE);
     if ($finfo === false) {
@@ -81,11 +70,11 @@ try {
     }
     $mimeType = finfo_file($finfo, $file['tmp_name']);
     finfo_close($finfo);
-    
+
     if ($mimeType === false) {
         throw new Exception('Failed to detect file type');
     }
-    
+
     if (!in_array($mimeType, $allowedTypes)) {
         ob_end_clean();
         http_response_code(400);
@@ -100,7 +89,6 @@ try {
     exit;
 }
 
-// Validate file size
 if ($file['size'] > $maxSize) {
     ob_end_clean();
     http_response_code(400);
@@ -109,43 +97,36 @@ if ($file['size'] > $maxSize) {
 }
 
 try {
-    // Clear any output buffer
     ob_end_clean();
-    
-    // Create upload directory
+
     $uploadDir = __DIR__ . '/../../uploads/action_prediction/';
     if (!is_dir($uploadDir)) {
         if (!mkdir($uploadDir, 0755, true)) {
             throw new Exception('Failed to create upload directory');
         }
     }
-    
-    // Generate unique filename
+
     $extension = pathinfo($file['name'], PATHINFO_EXTENSION);
     $uniqueFileName = uniqid('action_', true) . '_' . time() . '.' . $extension;
     $uploadPath = $uploadDir . $uniqueFileName;
-    
-    // Move uploaded file
+
     if (!move_uploaded_file($file['tmp_name'], $uploadPath)) {
         throw new Exception('Failed to save uploaded file');
     }
-    
-    // Get absolute paths
+
     $uploadPathAbs = realpath($uploadPath);
     $actionPredDir = __DIR__ . '/../../Action_Video_Prediction';
     $pythonScript = $actionPredDir . '/predict_action.py';
     $modelPath = $actionPredDir . '/Model_2dongtac.pth';
-    
-    // Check if files exist
+
     if (!file_exists($pythonScript)) {
         throw new Exception('Python prediction script not found: ' . $pythonScript);
     }
-    
+
     if (!file_exists($modelPath)) {
         throw new Exception('Model file not found: ' . $modelPath);
     }
-    
-    // Get Python executable
+
     $pythonCmd = null;
     if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
         $testCommands = ['python', 'py', 'python3'];
@@ -167,34 +148,32 @@ try {
             }
         }
     }
-    
+
     if (!$pythonCmd) {
         throw new Exception('Python not found. Please install Python.');
     }
-    
-    // Run prediction
-    $command = escapeshellarg($pythonCmd) . ' ' . 
-               escapeshellarg($pythonScript) . ' ' . 
-               escapeshellarg($uploadPathAbs) . 
-               ' --model ' . escapeshellarg($modelPath) . 
+
+    $command = escapeshellarg($pythonCmd) . ' ' .
+               escapeshellarg($pythonScript) . ' ' .
+               escapeshellarg($uploadPathAbs) .
+               ' --model ' . escapeshellarg($modelPath) .
                ' --device cpu 2>&1';
-    
+
     $originalDir = getcwd();
     chdir($actionPredDir);
     $output = shell_exec($command);
     chdir($originalDir);
-    
+
     if (!$output) {
         throw new Exception('No output from prediction script');
     }
-    
-    // Parse JSON response
+
     $jsonStart = strpos($output, '{');
     if ($jsonStart === false) {
         error_log("Python script output (first 500 chars): " . substr($output, 0, 500));
         throw new Exception('Invalid response format from prediction script. Output: ' . substr($output, 0, 200));
     }
-    
+
     $braceCount = 0;
     $jsonEnd = $jsonStart;
     for ($i = $jsonStart; $i < strlen($output); $i++) {
@@ -207,35 +186,32 @@ try {
             }
         }
     }
-    
+
     $jsonOutput = substr($output, $jsonStart, $jsonEnd - $jsonStart);
     $result = json_decode($jsonOutput, true);
-    
+
     if (!$result) {
         error_log("Failed to parse JSON. Output: " . substr($output, 0, 500));
         throw new Exception('Failed to parse prediction result. JSON error: ' . json_last_error_msg());
     }
-    
+
     if (!$result['success']) {
         throw new Exception($result['error'] ?? 'Prediction failed');
     }
-    
-    // Map predicted class to skill name for chatbot analysis
+
     $skillMap = [
         'DriveBackhand' => 'drive_two_backhand',
         'DriveForehand' => 'drive_forehand'
     ];
     $skill = $skillMap[$result['predicted_class']] ?? 'drive_forehand';
-    
-    // Run chatbot analysis automatically
+
     $analysisResult = null;
     $analysisError = null;
-    $chatbotDir = __DIR__ . '/../../chatbot/back_end';
+    $chatbotDir = __DIR__ . '/../../chatbot_newest/chatbot/back_end';
     $pythonScript = $chatbotDir . '/run_analysis.py';
-    
+
     if (file_exists($pythonScript) && file_exists($uploadPathAbs)) {
         try {
-            // Get Python executable (same logic as video_analysis.php)
             $pythonCmd = null;
             if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
                 $testCommands = ['python', 'py', 'python3'];
@@ -257,21 +233,20 @@ try {
                     }
                 }
             }
-            
+
             if ($pythonCmd) {
                 $pythonScriptAbs = realpath($pythonScript);
-                $command = escapeshellarg($pythonCmd) . ' ' . 
-                           escapeshellarg($pythonScriptAbs) . ' ' . 
-                           escapeshellarg($uploadPathAbs) . ' ' . 
+                $command = escapeshellarg($pythonCmd) . ' ' .
+                           escapeshellarg($pythonScriptAbs) . ' ' .
+                           escapeshellarg($uploadPathAbs) . ' ' .
                            '--skill ' . escapeshellarg($skill) . ' 2>' . (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN' ? 'nul' : '/dev/null');
-                
+
                 $originalDir = getcwd();
                 chdir($chatbotDir);
                 $analysisOutput = shell_exec($command);
                 chdir($originalDir);
-                
+
                 if ($analysisOutput) {
-                    // Parse JSON output
                     $jsonStart = strpos($analysisOutput, '{');
                     if ($jsonStart !== false) {
                         $braceCount = 0;
@@ -288,7 +263,7 @@ try {
                         }
                         $jsonOutput = substr($analysisOutput, $jsonStart, $jsonEnd - $jsonStart);
                         $analysisResult = json_decode($jsonOutput, true);
-                        
+
                         if (!$analysisResult || !isset($analysisResult['success'])) {
                             $analysisResult = null;
                             $analysisError = 'Failed to parse analysis result';
@@ -309,10 +284,8 @@ try {
     } else {
         $analysisError = 'Chatbot analysis script not found';
     }
-    
-    // Save prediction to database (with analysis results)
+
     try {
-        // Create table if not exists
         $pdo->exec("CREATE TABLE IF NOT EXISTS action_predictions (
             id INT AUTO_INCREMENT PRIMARY KEY,
             user_id BIGINT UNSIGNED NOT NULL,
@@ -332,8 +305,7 @@ try {
             INDEX idx_analysis_session_id (analysis_session_id),
             INDEX idx_user_session (user_id, analysis_session_id)
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci");
-        
-        // Add missing columns if table already exists (for existing installations)
+
         $columnsToAdd = [
             'analysis_session_id' => "ALTER TABLE action_predictions ADD COLUMN analysis_session_id VARCHAR(255) NULL AFTER probabilities",
             'analysis_success' => "ALTER TABLE action_predictions ADD COLUMN analysis_success TINYINT(1) DEFAULT 0 AFTER analysis_session_id",
@@ -341,35 +313,30 @@ try {
             'analysis_coaching_feedback' => "ALTER TABLE action_predictions ADD COLUMN analysis_coaching_feedback TEXT NULL AFTER analysis_feedback",
             'analysis_raw_feedback' => "ALTER TABLE action_predictions ADD COLUMN analysis_raw_feedback TEXT NULL AFTER analysis_coaching_feedback"
         ];
-        
+
         foreach ($columnsToAdd as $columnName => $alterSql) {
             try {
-                // Check if column exists
                 $checkStmt = $pdo->query("SHOW COLUMNS FROM action_predictions LIKE '$columnName'");
                 if ($checkStmt->rowCount() == 0) {
-                    // Column doesn't exist, add it
                     $pdo->exec($alterSql);
                     error_log("Action prediction: Added missing column: $columnName");
                 }
             } catch (PDOException $e) {
-                // Column might already exist or other error, continue
                 error_log("Action prediction: Column check/add for $columnName: " . $e->getMessage());
             }
         }
-        
-        // Add indexes if they don't exist
+
         try {
             $indexesToAdd = [
                 'idx_analysis_session_id' => "CREATE INDEX idx_analysis_session_id ON action_predictions (analysis_session_id)",
                 'idx_user_session' => "CREATE INDEX idx_user_session ON action_predictions (user_id, analysis_session_id)"
             ];
-            
+
             foreach ($indexesToAdd as $indexName => $createIndexSql) {
                 try {
                     $pdo->exec($createIndexSql);
                     error_log("Action prediction: Added index: $indexName");
                 } catch (PDOException $e) {
-                    // Index might already exist, ignore
                     if (strpos($e->getMessage(), 'Duplicate key name') === false) {
                         error_log("Action prediction: Index creation for $indexName: " . $e->getMessage());
                     }
@@ -378,14 +345,13 @@ try {
         } catch (PDOException $e) {
             error_log("Action prediction: Index creation error: " . $e->getMessage());
         }
-        
-        // Prepare analysis data for database
+
         $analysisSessionId = null;
         $analysisSuccess = 0;
         $analysisFeedbackJson = null;
         $coachingFeedback = null;
         $rawFeedbackJson = null;
-        
+
         if ($analysisResult && $analysisResult['success']) {
             $analysisSessionId = $analysisResult['session_id'] ?? null;
             $analysisSuccess = 1;
@@ -398,13 +364,12 @@ try {
                 'phase_count' => $analysisResult['phase_count'] ?? 0,
                 'techniques_detected' => $analysisResult['techniques_detected'] ?? []
             ]);
-            
-            // Log for debugging
+
             error_log("Action prediction: Saving analysis with session_id: " . $analysisSessionId . " for user_id: " . $authUser['id']);
         } else {
             error_log("Action prediction: No analysis result or analysis failed. analysisResult: " . json_encode($analysisResult ?? null));
         }
-        
+
         $stmt = $pdo->prepare('INSERT INTO action_predictions (user_id, video_name, video_path, predicted_class, confidence, probabilities, analysis_session_id, analysis_success, analysis_feedback, analysis_coaching_feedback, analysis_raw_feedback) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
         $stmt->execute([
             $authUser['id'],
@@ -419,14 +384,12 @@ try {
             $coachingFeedback,
             $rawFeedbackJson
         ]);
-        
+
         $predictionId = $pdo->lastInsertId();
-        
-        // Verify the insert was successful and log session_id
+
         if ($predictionId) {
             error_log("Action prediction: Successfully inserted prediction ID: " . $predictionId . " with analysis_session_id: " . ($analysisSessionId ?? 'NULL') . " for user_id: " . $authUser['id']);
-            
-            // Double-check by querying back
+
             if ($analysisSessionId) {
                 $verifyStmt = $pdo->prepare('SELECT id, user_id, analysis_session_id, analysis_success FROM action_predictions WHERE id = ?');
                 $verifyStmt->execute([$predictionId]);
@@ -444,10 +407,8 @@ try {
         error_log("Database error in action prediction: " . $e->getMessage());
         error_log("Stack trace: " . $e->getTraceAsString());
         error_log("User ID: " . $authUser['id'] . ", Session ID: " . ($analysisSessionId ?? 'NULL'));
-        // Continue even if database save fails, but log the error
     }
-    
-    // Prepare response
+
     $response = [
         'success' => true,
         'prediction' => [
@@ -459,8 +420,7 @@ try {
         'video_path' => '/pickelball/uploads/action_prediction/' . $uniqueFileName,
         'video_name' => $file['name']
     ];
-    
-    // Add analysis results if available
+
     if ($analysisResult && $analysisResult['success']) {
         $response['analysis'] = [
             'success' => true,
@@ -478,10 +438,9 @@ try {
             'error' => $analysisError
         ];
     }
-    
-    // Return result
+
     echo json_encode($response, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
-    
+
 } catch (Exception $e) {
     error_log("Action prediction error: " . $e->getMessage());
     error_log("Stack trace: " . $e->getTraceAsString());

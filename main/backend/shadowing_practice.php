@@ -1,19 +1,13 @@
 <?php
 declare(strict_types=1);
 
-/**
- * Backend logic for shadowing practice page
- * Handles pose validation and information retrieval
- */
 
-// Get pose parameter from URL
+
 $poseName = $_GET['pose'] ?? '';
 
 $validPoses = ['Serve', 'DriveForehand', 'DriveBackhand', 'Smash', 'Volley'];
 
-// Validate pose name
 if (!in_array($poseName, $validPoses)) {
-    // If invalid, redirect to selection page
     return [
         'valid' => false,
         'pose' => $poseName,
@@ -22,11 +16,9 @@ if (!in_array($poseName, $validPoses)) {
     ];
 }
 
-// Load translations for technique names
 require_once __DIR__ . '/../../includes/i18n.php';
 $lang = getLanguage();
 
-// Map pose names to display names
 $poseDisplayNames = [
     'Serve' => 'Serve',
     'DriveForehand' => 'Forehand Drive',
@@ -36,7 +28,7 @@ $poseDisplayNames = [
 ];
 
 $assetsDir = __DIR__ . '/../../shadowing_for_pickleball-main/shadowing_for_pickleball-main/assets/' . $poseName . '/';
-$hasAssets = is_dir($assetsDir) && 
+$hasAssets = is_dir($assetsDir) &&
              file_exists($assetsDir . 'ghost_0.png') &&
              file_exists($assetsDir . 'meta_0.npy') &&
              file_exists($assetsDir . 'target_0.npy');
@@ -60,4 +52,3 @@ return [
     'assetsPath' => '/pickelball/shadowing_for_pickleball-main/shadowing_for_pickleball-main/assets/' . $poseName . '/',
     'availablePoses' => $availablePoses
 ];
-

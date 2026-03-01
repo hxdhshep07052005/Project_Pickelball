@@ -1,10 +1,7 @@
 <?php
 declare(strict_types=1);
 
-/**
- * User profile page frontend
- * Displays user information and password change form
- */
+
 
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
@@ -14,15 +11,12 @@ require __DIR__ . '/../backend/require_auth.php';
 require __DIR__ . '/../backend/bootstrap.php';
 $config = require __DIR__ . '/../backend/config.php';
 
-// Get authenticated user ID
 $userId = (int)$authUser['id'];
 
-// Get error and success messages from session
 $error = $_SESSION['password_change_error'] ?? null;
 $success = $_SESSION['password_change_success'] ?? null;
 unset($_SESSION['password_change_error'], $_SESSION['password_change_success']);
 
-// Fetch user information from database
 $statement = $pdo->prepare('SELECT email, display_name, created_at FROM users WHERE id = ? LIMIT 1');
 $statement->execute([$userId]);
 $user = $statement->fetch();
@@ -195,11 +189,11 @@ require __DIR__ . '/../../includes/header.php';
         <div class="password-card">
             <h2>Change Password</h2>
             <p>To change your password, we'll send a verification code to your email address for security purposes.</p>
-            
+
             <?php if ($error): ?>
                 <div class="alert alert-error"><?php echo htmlspecialchars($error, ENT_QUOTES, 'UTF-8'); ?></div>
             <?php endif; ?>
-            
+
             <?php if ($success): ?>
                 <div class="alert alert-success"><?php echo htmlspecialchars($success, ENT_QUOTES, 'UTF-8'); ?></div>
             <?php endif; ?>
@@ -223,4 +217,3 @@ require __DIR__ . '/../../includes/header.php';
     </div>
 </section>
 <?php require __DIR__ . '/../../includes/footer.php'; ?>
-

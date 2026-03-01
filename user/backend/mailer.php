@@ -1,15 +1,10 @@
 <?php
 declare(strict_types=1);
 
-/**
- * SMTP mailer function
- * Sends OTP verification code via email using SMTP protocol
- * Supports login, registration, and password_change contexts
- */
+
 
 function sendOtpMail(array $config, string $recipientEmail, string $code, string $context = 'login'): bool
 {
-    // Get mailer configuration
     $mailerConfig = $config['mailer'] ?? [];
 
     $username = trim($mailerConfig['username'] ?? '');
@@ -20,12 +15,10 @@ function sendOtpMail(array $config, string $recipientEmail, string $code, string
     $port = (int)($mailerConfig['port'] ?? 587);
     $encryption = strtolower(trim((string)($mailerConfig['encryption'] ?? 'tls')));
 
-    // Validate required configuration
     if ($username === '' || $password === '' || $fromEmail === '' || $fromName === '' || $recipientEmail === '') {
         return false;
     }
 
-    // Create SMTP connection
     $transport = $encryption === 'ssl' ? 'ssl://' . $host . ':' . $port : $host . ':' . $port;
     $context = stream_context_create([
         'ssl' => [
@@ -35,7 +28,6 @@ function sendOtpMail(array $config, string $recipientEmail, string $code, string
         ],
     ]);
 
-    // Connect to SMTP server
     $socket = @stream_socket_client($transport, $errno, $errstr, 20, STREAM_CLIENT_CONNECT, $context);
 
     if (!$socket) {
@@ -44,7 +36,6 @@ function sendOtpMail(array $config, string $recipientEmail, string $code, string
 
     stream_set_timeout($socket, 20);
 
-    // Helper function to read SMTP response
     $read = static function () use ($socket): ?string {
         $response = '';
         while (($line = fgets($socket, 515)) !== false) {
@@ -56,7 +47,6 @@ function sendOtpMail(array $config, string $recipientEmail, string $code, string
         return $response === '' ? null : $response;
     };
 
-    // Helper function to send SMTP command and check response
     $command = static function (string $payload) use ($socket, $read): bool {
         fwrite($socket, $payload . "\r\n");
         $response = $read();
@@ -67,7 +57,6 @@ function sendOtpMail(array $config, string $recipientEmail, string $code, string
         return $code >= 200 && $code < 400; // Success codes
     };
 
-    // Read SMTP greeting
     $greeting = $read();
 
     if ($greeting === null || strncmp($greeting, '220', 3) !== 0) {
@@ -75,13 +64,11 @@ function sendOtpMail(array $config, string $recipientEmail, string $code, string
         return false;
     }
 
-    // Send EHLO command
     if (!$command('EHLO localhost')) {
         fclose($socket);
         return false;
     }
 
-    // Enable TLS encryption if required
     if ($encryption === 'tls') {
         if (!$command('STARTTLS')) {
             fclose($socket);
@@ -91,14 +78,12 @@ function sendOtpMail(array $config, string $recipientEmail, string $code, string
             fclose($socket);
             return false;
         }
-        // Send EHLO again after TLS
         if (!$command('EHLO localhost')) {
             fclose($socket);
             return false;
         }
     }
 
-    // Authenticate with SMTP server
     if (!$command('AUTH LOGIN')) {
         fclose($socket);
         return false;
@@ -114,7 +99,6 @@ function sendOtpMail(array $config, string $recipientEmail, string $code, string
         return false;
     }
 
-    // Set sender and recipient
     if (!$command('MAIL FROM:<' . $fromEmail . '>')) {
         fclose($socket);
         return false;
@@ -125,13 +109,11 @@ function sendOtpMail(array $config, string $recipientEmail, string $code, string
         return false;
     }
 
-    // Prepare to send email data
     if (!$command('DATA')) {
         fclose($socket);
         return false;
     }
 
-    // Set email subject and body based on context
     if ($context === 'register') {
         $subject = 'Pickleball registration verification code';
         $bodyMessage = "Welcome to Pickleball Training.\nYour registration verification code is: $code";
@@ -143,7 +125,6 @@ function sendOtpMail(array $config, string $recipientEmail, string $code, string
         $bodyMessage = "Your Pickleball sign-in verification code is: $code";
     }
 
-    // Build email headers and message
     $headers = [
         'From: ' . $fromName . ' <' . $fromEmail . '>',
         'To: <' . $recipientEmail . '>',
@@ -156,10 +137,8 @@ function sendOtpMail(array $config, string $recipientEmail, string $code, string
     $body = $bodyMessage;
     $message = implode("\r\n", $headers) . "\r\n\r\n" . $body . "\r\n.";
 
-    // Send email message
     fwrite($socket, $message . "\r\n");
 
-    // Check if email was accepted
     $dataResponse = $read();
 
     if ($dataResponse === null || strncmp($dataResponse, '250', 3) !== 0) {
@@ -167,10 +146,8 @@ function sendOtpMail(array $config, string $recipientEmail, string $code, string
         return false;
     }
 
-    // Close SMTP connection
     $command('QUIT');
     fclose($socket);
 
     return true;
 }
-

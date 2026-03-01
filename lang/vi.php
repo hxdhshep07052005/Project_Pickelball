@@ -1,12 +1,9 @@
 <?php
 declare(strict_types=1);
 
-/**
- * Vietnamese translations
- */
+
 
 return [
-    // Common
     'app_name' => 'Huấn Luyện Pickleball',
     'welcome' => 'Chào mừng',
     'login' => 'Đăng nhập',
@@ -29,8 +26,7 @@ return [
     'error' => 'Lỗi',
     'success' => 'Thành công',
     'confirm' => 'Xác nhận',
-    
-    // Navigation
+
     'nav_home' => 'Trang chủ',
     'nav_training' => 'Huấn luyện',
     'nav_techniques' => 'Kỹ thuật',
@@ -43,8 +39,7 @@ return [
     'nav_live_session' => 'Buổi tập trực tiếp',
     'nav_shadowing_mode' => 'Chế độ Shadowing',
     'nav_performance_dashboard' => 'Bảng hiệu suất',
-    
-    // Auth
+
     'sign_in' => 'Đăng nhập',
     'sign_up' => 'Đăng ký',
     'sign_out' => 'Đăng xuất',
@@ -59,8 +54,7 @@ return [
     'already_have_account' => 'Đã có tài khoản?',
     'dont_have_account' => 'Chưa có tài khoản?',
     'sign_in_with_google' => 'Đăng nhập bằng Google',
-    
-    // Verification
+
     'verify_code' => 'Xác minh mã',
     'verify_registration' => 'Xác minh đăng ký',
     'verify_password_change' => 'Xác minh đổi mật khẩu',
@@ -71,13 +65,11 @@ return [
     'code_expired' => 'Mã xác minh đã hết hạn.',
     'invalid_code' => 'Mã xác minh không hợp lệ.',
     'too_many_attempts' => 'Quá nhiều lần thử sai.',
-    
-    // Profile
+
     'change_password' => 'Đổi mật khẩu',
     'password_changed_success' => 'Mật khẩu của bạn đã được thay đổi thành công.',
     'password_change_error' => 'Không thể thay đổi mật khẩu.',
-    
-    // Settings
+
     'settings_title' => 'Cài đặt',
     'settings_subtitle' => 'Tùy chỉnh trải nghiệm của bạn với theme và ngôn ngữ.',
     'theme_settings' => 'Giao diện',
@@ -92,8 +84,7 @@ return [
     'vietnamese' => 'Tiếng Việt',
     'settings_saved' => 'Đã lưu cài đặt thành công.',
     'settings_error' => 'Không thể lưu cài đặt.',
-    
-    // Video Analysis
+
     'video_analysis' => 'Phân tích Video',
     'video_analysis_subtitle' => 'Tải lên video pickleball của bạn để nhận phân tích kỹ thuật và phản hồi được hỗ trợ bởi AI.',
     'upload_video' => 'Nhấp để tải lên hoặc kéo thả',
@@ -126,7 +117,7 @@ return [
     'analysis_failed' => 'Phân Tích Thất Bại',
     'analysis_failed_desc' => 'Video đã được tải lên nhưng phân tích thất bại. Vui lòng kiểm tra xem Python đã được cài đặt và tất cả các gói cần thiết đã có sẵn. Xem thông tin debug bên dưới để biết chi tiết.',
     'api_unavailable' => 'API Không Khả Dụng',
-    'api_unavailable_desc' => 'Dịch vụ phân tích hiện không khả dụng. Vui lòng đảm bảo file ChatBox/run_analysis.py tồn tại và Python đã được cài đặt đúng cách.',
+    'api_unavailable_desc' => 'Dịch vụ phân tích hiện không khả dụng. Vui lòng đảm bảo file chatbot_newest/chatbot/back_end/run_analysis.py tồn tại và Python đã được cài đặt đúng cách.',
     'api_error' => 'Lỗi API',
     'api_error_desc' => 'Lỗi khi chạy dịch vụ phân tích. Vui lòng kiểm tra server logs để biết chi tiết.',
     'frames_extracted' => 'Số Khung Hình Trích Xuất',
@@ -154,8 +145,7 @@ return [
     'key_issues' => 'Vấn Đề Chính Được Phát Hiện',
     'coaching_assistant' => 'Trợ Lý Huấn Luyện Của Bạn',
     'online' => 'Đang hoạt động',
-    
-    // Action Video Prediction
+
     'action_video_prediction' => 'Dự Đoán Động Tác Video',
     'action_prediction_subtitle' => 'Tải lên video để dự đoán là DriveBackhand hay DriveForehand',
     'predict_action' => 'Dự Đoán Động Tác',
@@ -167,8 +157,7 @@ return [
     'please_select_video' => 'Vui lòng chọn file video',
     'processing' => 'Đang xử lý',
     'upload_error' => 'Lỗi khi tải video. Vui lòng thử lại.',
-    
-    // Shadowing Mode
+
     'shadowing_mode' => 'Chế độ Shadowing',
     'shadowing_subtitle' => 'Chọn kỹ thuật để luyện tập. Di chuột vào video để xem trước, sau đó nhấp để bắt đầu luyện tập shadowing.',
     'your_camera_view' => 'Góc nhìn Camera của bạn',
@@ -184,14 +173,12 @@ return [
     'camera_not_found' => 'Không tìm thấy camera trên thiết bị của bạn.',
     'more_techniques' => 'Thêm kỹ thuật',
     'coming_soon' => 'Các kỹ thuật mới sẽ được thêm trong tương lai. Hãy đón chờ cập nhật!',
-    
-    // Techniques
+
     'forehand_drive' => 'Cú đánh Forehand',
     'forehand_drive_desc' => 'Phát triển những cú đánh forehand mạnh mẽ và chính xác.',
     'backhand_drive' => 'Cú đánh Backhand',
     'backhand_drive_desc' => 'Hoàn thiện kỹ thuật và sức mạnh cú đánh backhand của bạn.',
-    
-    // Index page
+
     'hero_title' => 'Làm chủ Pickleball với Huấn luyện AI',
     'hero_subtitle' => 'Nâng cao trình độ của bạn với công nghệ thị giác máy tính tiên tiến và huấn luyện cá nhân hóa',
     'hero_description' => 'Trải nghiệm tương lai của huấn luyện pickleball. AI của chúng tôi phân tích kỹ thuật của bạn theo thời gian thực và cung cấp phản hồi tức thì để giúp bạn cải thiện nhanh hơn.',
@@ -199,15 +186,13 @@ return [
     'learn_more' => 'Tìm hiểu thêm',
     'immersive_training' => 'HUẤN LUYỆN TƯƠNG TÁC',
     'immersive_subtitle' => 'Tính năng tiên tiến được hỗ trợ bởi AI và thị giác máy tính',
-    
-    // Hero section
+
     'hero_main_title' => 'HUẤN LUYỆN PICKLEBALL',
     'hero_effective_platform' => 'Nền tảng Huấn luyện AI Hiệu quả Nhất',
     'hero_learn_description' => 'Học và cải thiện kỹ thuật pickleball của bạn với công nghệ thị giác máy tính và trí tuệ nhân tạo. Nhận phản hồi tức thì, phân tích thời gian thực và hướng dẫn huấn luyện cá nhân hóa.',
     'get_started' => 'Bắt đầu',
     'how_it_works' => 'Cách hoạt động',
-    
-    // Features section
+
     'training_approach' => 'Mỗi buổi tập được xây dựng xung quanh một phương pháp từng bước đã được chứng minh để tối đa hóa việc học và tiến bộ kỹ năng. Những hiểu biết bạn nhận được trực tiếp chuyển thành kỹ thuật tốt hơn và hiệu suất thể thao được cải thiện.',
     'feature_video_analysis' => 'Phân tích Video',
     'feature_video_analysis_desc' => 'Tải lên video huấn luyện của bạn và nhận phân tích kỹ thuật được hỗ trợ bởi AI ngay lập tức với phản hồi chi tiết và đề xuất cải thiện. Công nghệ thị giác máy tính tiên tiến của chúng tôi phân tích từng chuyển động từng khung hình.',
@@ -245,8 +230,7 @@ return [
     'feature_stunning_visuals_item2' => 'Góc nhìn camera đa góc',
     'feature_stunning_visuals_item3' => 'Trực quan hóa chuyển động 3D tương tác',
     'feature_stunning_visuals_item4' => 'Điểm nổi bật kỹ thuật có chú thích',
-    
-    // Techniques section
+
     'master_techniques' => 'LÀM CHỦ CÁC KỸ THUẬT',
     'master_techniques_subtitle' => 'Học và hoàn thiện 4 kỹ thuật pickleball cốt lõi với phân tích và phản hồi được hỗ trợ bởi AI',
     'technique_serve' => 'Giao bóng',
@@ -257,12 +241,10 @@ return [
     'technique_drive_forehand_desc' => 'Phát triển những cú đánh forehand mạnh mẽ và chính xác. Phân tích vị trí cơ thể, cơ học cú đánh và theo dõi của bạn.',
     'technique_drive_backhand' => 'Cú đánh Backhand',
     'technique_drive_backhand_desc' => 'Tăng cường kỹ thuật cú đánh backhand của bạn. Nhận phân tích chi tiết về tư thế, xoay và thực hiện cú đánh của bạn.',
-    
-    // CTA section
+
     'cta_title' => 'NGỪNG QUAN SÁT KIẾN THỨC, BẮT ĐẦU HẤP THỤ NÓ',
     'cta_description' => 'Cho dù bạn là huấn luyện viên với nhiều năm kinh nghiệm hay người chơi đầy khát vọng – bạn sẽ trải nghiệm việc học nhanh hơn và hiệu suất được cải thiện ngay từ ngày đầu tiên với nền tảng huấn luyện được hỗ trợ bởi AI của chúng tôi.',
-    
-    // Live Action Detection
+
     'live_action_detection' => 'Phát hiện Hành động Trực tiếp',
     'live_action_subtitle' => 'Phát hiện tư thế thời gian thực từ webcam của bạn. Nhận phản hồi tức thì về kỹ thuật DriveBackhand và DriveForehand của bạn.',
     'webcam_feed' => 'Luồng Webcam',
@@ -281,4 +263,3 @@ return [
     'frames' => 'khung hình',
     'prediction_ready' => 'Dự đoán Sẵn sàng',
 ];
-

@@ -1,16 +1,12 @@
 <?php
 declare(strict_types=1);
 
-/**
- * Admin Dashboard page
- * Main admin interface with statistics and management links
- */
+
 
 require __DIR__ . '/../backend/require_auth.php';
 
 $admin = $_SESSION['admin'];
 
-// Get statistics from database
 $stats = [
     'total_users' => 0,
     'active_users' => 0,
@@ -21,31 +17,24 @@ $stats = [
 ];
 
 try {
-    // Count total users
     $stmt = $pdo->query('SELECT COUNT(*) as count FROM users');
     $stats['total_users'] = (int)$stmt->fetch()['count'];
-    
-    // Count active users
+
     $stmt = $pdo->query("SELECT COUNT(*) as count FROM users WHERE status = 'active'");
     $stats['active_users'] = (int)$stmt->fetch()['count'];
-    
-    // Count video analyses
+
     $stmt = $pdo->query('SELECT COUNT(*) as count FROM video_analyses');
     $stats['total_video_analyses'] = (int)$stmt->fetch()['count'];
-    
-    // Count action predictions
+
     $stmt = $pdo->query('SELECT COUNT(*) as count FROM action_predictions');
     $stats['total_action_predictions'] = (int)$stmt->fetch()['count'];
-    
-    // Count analyses today
+
     $stmt = $pdo->query("SELECT COUNT(*) as count FROM video_analyses WHERE DATE(created_at) = CURDATE()");
     $stats['analyses_today'] = (int)$stmt->fetch()['count'];
-    
-    // Count predictions today
+
     $stmt = $pdo->query("SELECT COUNT(*) as count FROM action_predictions WHERE DATE(created_at) = CURDATE()");
     $stats['predictions_today'] = (int)$stmt->fetch()['count'];
 } catch (PDOException $e) {
-    // If tables don't exist, stats will remain 0
     error_log("Dashboard stats error: " . $e->getMessage());
 }
 
@@ -320,13 +309,13 @@ try {
             <a href="../backend/logout.php" class="btn-logout">Logout</a>
         </div>
     </header>
-    
+
     <main class="dashboard-content">
         <div class="welcome-card">
             <h2>Welcome, Admin!</h2>
             <p>Manage your Pickleball Training System from here</p>
         </div>
-        
+
         <div class="stats-grid">
             <div class="stat-card">
                 <svg class="stat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -389,7 +378,7 @@ try {
                 <div class="stat-change"><?php echo number_format($stats['predictions_today']); ?> today</div>
             </div>
         </div>
-        
+
         <div class="charts-section">
             <div class="chart-container">
                 <h3>Activity Overview</h3>
@@ -414,7 +403,7 @@ try {
                 </div>
             </div>
         </div>
-        
+
         <div class="quick-actions">
             <a href="users.php" class="action-btn">
                 <svg style="width: 24px; height: 24px; margin-bottom: 8px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -450,13 +439,12 @@ let activityChart = null;
 let userChart = null;
 
 function loadChart(days, button) {
-    // Update active button
     const buttons = document.querySelectorAll('.chart-container:first-child .chart-control-btn');
     buttons.forEach(btn => btn.classList.remove('active'));
     if (button) {
         button.classList.add('active');
     }
-    
+
     fetch(`../backend/get_chart_data.php?days=${days}`)
         .then(response => response.json())
         .then(data => {
@@ -470,13 +458,12 @@ function loadChart(days, button) {
 }
 
 function loadUserChart(days, button) {
-    // Update active button
     const buttons = document.querySelectorAll('.chart-container:last-child .chart-control-btn');
     buttons.forEach(btn => btn.classList.remove('active'));
     if (button) {
         button.classList.add('active');
     }
-    
+
     fetch(`../backend/get_chart_data.php?days=${days}`)
         .then(response => {
             if (!response.ok) {
@@ -499,11 +486,11 @@ function loadUserChart(days, button) {
 
 function renderActivityChart(data) {
     const ctx = document.getElementById('activityChart').getContext('2d');
-    
+
     if (activityChart) {
         activityChart.destroy();
     }
-    
+
     activityChart = new Chart(ctx, {
         type: 'line',
         data: {
@@ -553,15 +540,15 @@ function renderUserChart(data) {
         console.error('User chart canvas not found');
         return;
     }
-    
+
     const ctx = canvas.getContext('2d');
-    
+
     if (userChart) {
         userChart.destroy();
     }
-    
+
     console.log('Rendering user chart with data:', data);
-    
+
     userChart = new Chart(ctx, {
         type: 'bar',
         data: {
@@ -602,7 +589,6 @@ function renderUserChart(data) {
     });
 }
 
-// Load initial charts
 document.addEventListener('DOMContentLoaded', function() {
     const firstBtn = document.querySelector('.chart-container:first-child .chart-control-btn.active');
     const lastBtn = document.querySelector('.chart-container:last-child .chart-control-btn.active');

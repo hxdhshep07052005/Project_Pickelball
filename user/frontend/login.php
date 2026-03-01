@@ -1,12 +1,8 @@
 <?php
 declare(strict_types=1);
 
-/**
- * Login page frontend
- * Displays login form with email/password and Google OAuth options
- */
 
-// Enable error reporting for debugging
+
 error_reporting(E_ALL);
 ini_set('display_errors', '1');
 ini_set('log_errors', '1');
@@ -22,13 +18,11 @@ try {
     die('Error loading required files: ' . htmlspecialchars($e->getMessage(), ENT_QUOTES, 'UTF-8') . ' in ' . htmlspecialchars($e->getFile(), ENT_QUOTES, 'UTF-8') . ' on line ' . $e->getLine());
 }
 
-// Redirect to home if already logged in
 if (isset($_SESSION['user'])) {
     header('Location: /pickelball/main/frontend/index.php');
     exit;
 }
 
-// Get error message and email from session (if any)
 $error = $_SESSION['login_error'] ?? null;
 $email = $_SESSION['login_email'] ?? '';
 unset($_SESSION['login_error'], $_SESSION['login_email']);
@@ -243,11 +237,10 @@ require __DIR__ . '/../../includes/header.php';
     </div>
 </section>
 <script src="https://www.google.com/recaptcha/api.js" async defer></script>
-<?php 
+<?php
 try {
     require __DIR__ . '/../../includes/footer.php';
 } catch (Throwable $e) {
     die('Error loading footer: ' . htmlspecialchars($e->getMessage(), ENT_QUOTES, 'UTF-8') . ' in ' . htmlspecialchars($e->getFile(), ENT_QUOTES, 'UTF-8') . ' on line ' . $e->getLine());
 }
 ?>
-

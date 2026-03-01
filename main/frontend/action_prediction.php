@@ -1,21 +1,16 @@
 <?php
 declare(strict_types=1);
 
-/**
- * Action Video Prediction page frontend
- * Uses trained LSTM model to predict DriveBackhand or DriveForehand
- */
+
 
 require_once __DIR__ . '/../../user/backend/require_auth.php';
 require_once __DIR__ . '/../../user/backend/bootstrap.php';
 require_once __DIR__ . '/../../includes/i18n.php';
 require_once __DIR__ . '/../../includes/header.php';
 
-// Get prediction history from database
 $userId = (int)$authUser['id'];
 $history = [];
 try {
-    // Create table if not exists
     $pdo->exec("CREATE TABLE IF NOT EXISTS action_predictions (
         id INT AUTO_INCREMENT PRIMARY KEY,
         user_id BIGINT UNSIGNED NOT NULL,
@@ -28,11 +23,9 @@ try {
         INDEX idx_user_id (user_id),
         INDEX idx_created_at (created_at)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci");
-    
-    // Check which columns exist
+
     $columns = $pdo->query("SHOW COLUMNS FROM action_predictions")->fetchAll(PDO::FETCH_COLUMN);
-    
-    // Build SELECT query based on available columns
+
     $selectFields = ['id', 'video_name', 'video_path', 'predicted_class', 'confidence', 'probabilities', 'created_at'];
     if (in_array('analysis_session_id', $columns)) {
         $selectFields[] = 'analysis_session_id';
@@ -46,12 +39,12 @@ try {
     if (in_array('analysis_raw_feedback', $columns)) {
         $selectFields[] = 'analysis_raw_feedback';
     }
-    
+
     $query = 'SELECT ' . implode(', ', $selectFields) . ' FROM action_predictions WHERE user_id = ? ORDER BY created_at DESC LIMIT 50';
     $stmt = $pdo->prepare($query);
     $stmt->execute([$userId]);
     $history = $stmt->fetchAll();
-    
+
     foreach ($history as &$item) {
         $item['probabilities'] = json_decode($item['probabilities'] ?? '{}', true) ?: [];
         $item['has_analysis'] = false;
@@ -83,13 +76,13 @@ try {
         visibility: visible !important;
         opacity: 1 !important;
     }
-    
+
     .action-prediction-section * {
         visibility: visible !important;
         opacity: 1 !important;
     }
-    
-    /* Override dark theme for action prediction section */
+
+
     html[data-theme="dark"] .action-prediction-section,
     html.theme-dark .action-prediction-section,
     body.theme-dark .action-prediction-section,
@@ -100,7 +93,7 @@ try {
         visibility: visible !important;
         opacity: 1 !important;
     }
-    
+
     html[data-theme="dark"] .action-prediction-section *,
     html.theme-dark .action-prediction-section *,
     body.theme-dark .action-prediction-section *,
@@ -108,21 +101,21 @@ try {
         visibility: visible !important;
         opacity: 1 !important;
     }
-    
+
     html[data-theme="dark"] .action-prediction-section .page-title,
     html.theme-dark .action-prediction-section .page-title,
     body.theme-dark .action-prediction-section .page-title,
     body[data-theme="dark"] .action-prediction-section .page-title {
         color: #ffffff !important;
     }
-    
+
     html[data-theme="dark"] .action-prediction-section .page-subtitle,
     html.theme-dark .action-prediction-section .page-subtitle,
     body.theme-dark .action-prediction-section .page-subtitle,
     body[data-theme="dark"] .action-prediction-section .page-subtitle {
         color: #e2e8f0 !important;
     }
-    
+
     html[data-theme="dark"] .action-prediction-section .upload-section,
     html.theme-dark .action-prediction-section .upload-section,
     body.theme-dark .action-prediction-section .upload-section,
@@ -131,7 +124,7 @@ try {
         background-color: #1e293b !important;
         border-color: #334155 !important;
     }
-    
+
     html[data-theme="dark"] .action-prediction-section .history-section,
     html.theme-dark .action-prediction-section .history-section,
     body.theme-dark .action-prediction-section .history-section,
@@ -139,12 +132,12 @@ try {
         background: #1e293b !important;
         background-color: #1e293b !important;
     }
-    
+
     body {
         background: #ffffff;
         overflow-x: hidden;
     }
-    
+
     html[data-theme="dark"] body,
     html.theme-dark body,
     body.theme-dark {
@@ -288,6 +281,38 @@ try {
         color: #059669;
         margin-bottom: 0;
         letter-spacing: -0.5px;
+    }
+    .prediction-confidence {
+        margin-top: 14px;
+        font-size: 18px;
+        font-weight: 600;
+        color: #0f172a;
+    }
+    .probabilities {
+        margin-top: 18px;
+        display: flex;
+        gap: 12px;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+    .probability-chip {
+        padding: 10px 14px;
+        border-radius: 10px;
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        font-size: 14px;
+        color: #334155;
+        min-width: 200px;
+        text-align: left;
+    }
+    .probability-label {
+        font-weight: 600;
+        color: #0f172a;
+        margin-bottom: 6px;
+    }
+    .probability-value {
+        font-weight: 700;
+        color: #059669;
     }
     .history-section {
         background: #ffffff;
@@ -505,7 +530,7 @@ try {
         <!-- Upload Section -->
         <div class="upload-section animate-on-scroll fade-in-up">
             <div id="alertContainer"></div>
-            
+
             <form id="uploadForm" class="upload-form" enctype="multipart/form-data">
                 <div class="file-upload-area" id="uploadArea">
                     <div class="upload-icon">
@@ -534,8 +559,10 @@ try {
         <div id="resultSection" class="result-section animate-on-scroll fade-in-up" style="display: none;">
             <div class="result-card">
                 <div class="predicted-class" id="predictedClass"></div>
+                <div class="prediction-confidence" id="predictionConfidence"></div>
+                <div class="probabilities" id="predictionProbabilities"></div>
             </div>
-            
+
             <!-- Chat Interface -->
             <div id="chatContainer" style="display: none; margin-top: 32px;" data-session-id="">
                 <!-- Chat Header -->
@@ -554,11 +581,11 @@ try {
                         <?php echo htmlspecialchars(t('online'), ENT_QUOTES, 'UTF-8'); ?>
                     </div>
                 </div>
-                
+
                 <div class="chat-messages" id="chatMessages" style="flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 16px; background: linear-gradient(to bottom, #f8fafc 0%, #ffffff 100%); scroll-behavior: smooth; max-height: 500px;">
                     <!-- Initial message will be added here -->
                 </div>
-                
+
                 <!-- Chat Suggestions -->
                 <div class="chat-suggestions" id="chatSuggestions" style="padding: 12px 20px; background: #ffffff; border-top: 1px solid #e2e8f0; border-bottom: 1px solid #e2e8f0;">
                     <div class="suggestion-title" style="font-size: 11px; font-weight: 600; color: #64748b; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.8px;"><?php echo htmlspecialchars(t('suggested_questions'), ENT_QUOTES, 'UTF-8'); ?>:</div>
@@ -589,13 +616,13 @@ try {
                         </button>
                     </div>
                 </div>
-                
+
                 <!-- Chat Input -->
                 <div class="chat-input-container" style="padding: 12px 20px; background: #ffffff; border-radius: 0 0 20px 20px;">
                     <div class="chat-input-wrapper" style="display: flex; align-items: flex-end; gap: 10px; background: #f8fafc; border: 2px solid #e2e8f0; border-radius: 24px; padding: 10px 16px; transition: all 0.2s ease;">
-                        <textarea 
-                            id="chatInput" 
-                            class="chat-input" 
+                        <textarea
+                            id="chatInput"
+                            class="chat-input"
                             placeholder="<?php echo htmlspecialchars(t('type_your_question'), ENT_QUOTES, 'UTF-8'); ?>"
                             rows="1"
                             style="flex: 1; border: none; background: transparent; resize: none; font-size: 14.5px; color: #1e293b; font-family: inherit; outline: none; max-height: 120px; overflow-y: auto; line-height: 1.5; padding: 0;"
@@ -609,7 +636,7 @@ try {
                 </div>
             </div>
         </div>
-        
+
         <style>
             .chat-messages::-webkit-scrollbar {
                 width: 6px;
@@ -631,13 +658,13 @@ try {
                 align-items: flex-start;
             }
             @keyframes slideIn {
-                from { 
-                    opacity: 0; 
-                    transform: translateY(15px) scale(0.95); 
+                from {
+                    opacity: 0;
+                    transform: translateY(15px) scale(0.95);
                 }
-                to { 
-                    opacity: 1; 
-                    transform: translateY(0) scale(1); 
+                to {
+                    opacity: 1;
+                    transform: translateY(0) scale(1);
                 }
             }
             .chat-message-user {
@@ -805,11 +832,11 @@ try {
                                     <?php echo htmlspecialchars($item['confidence'], ENT_QUOTES, 'UTF-8'); ?>% confidence
                                 </span>
                             </div>
-                            
+
                             <!-- Details Section -->
                             <div class="history-details">
                                 <?php if ($item['has_analysis'] && !empty($item['analysis_feedback'])): ?>
-                                    <?php 
+                                    <?php
                                     $issues = array_filter($item['analysis_feedback'], function($issue) {
                                         return isset($issue['severity']) && $issue['severity'] !== 'none';
                                     });
@@ -841,7 +868,7 @@ try {
                                         </div>
                                     <?php endif; ?>
                                 <?php endif; ?>
-                                
+
                                 <?php if ($item['has_analysis'] && !empty($item['analysis_coaching_feedback'])): ?>
                                     <div class="detail-section">
                                         <div class="detail-section-title">
@@ -857,7 +884,7 @@ try {
                                         </div>
                                     </div>
                                 <?php endif; ?>
-                                
+
                                 <?php if (!$item['has_analysis']): ?>
                                     <div class="detail-section">
                                         <div class="detail-content" style="padding: 16px; background: #fef3c7; border-left: 3px solid #f59e0b; color: #92400e;">
@@ -878,9 +905,7 @@ try {
 
 <script src="/pickelball/main/frontend/js/scroll-animation.js"></script>
 <script>
-// Ensure DOM is loaded
 document.addEventListener('DOMContentLoaded', function() {
-    // File upload handling - set global variables
     const uploadArea = document.getElementById('uploadArea');
     videoInput = document.getElementById('videoInput');
     selectedFile = document.getElementById('selectedFile');
@@ -890,24 +915,21 @@ document.addEventListener('DOMContentLoaded', function() {
     uploadForm = document.getElementById('uploadForm');
     resultSection = document.getElementById('resultSection');
     alertContainer = document.getElementById('alertContainer');
-    
-    // Ensure modal is hidden on page load
+
     const modal = document.getElementById('predictionModal');
     if (modal) {
         modal.style.display = 'none';
     }
-    
+
     if (!uploadArea || !videoInput || !selectedFile || !fileName || !fileSize || !submitBtn || !uploadForm) {
         console.error('Required elements not found');
         return;
     }
 
-    // Click to select file
     uploadArea.addEventListener('click', () => {
         videoInput.click();
     });
 
-    // Drag and drop
     uploadArea.addEventListener('dragover', (e) => {
         e.preventDefault();
         uploadArea.classList.add('dragover');
@@ -927,30 +949,28 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     videoInput.addEventListener('change', handleFileSelect);
-    
-    // Form submission
+
     uploadForm.addEventListener('submit', async (e) => {
         e.preventDefault();
-        
+
         const file = videoInput.files[0];
         if (!file) {
             showAlert('<?php echo htmlspecialchars(t('please_select_video'), ENT_QUOTES, 'UTF-8'); ?>', 'error');
             return;
         }
-        
+
         const formData = new FormData();
         formData.append('video', file);
-        
+
         submitBtn.disabled = true;
         submitBtn.textContent = '<?php echo htmlspecialchars(t('processing'), ENT_QUOTES, 'UTF-8'); ?>...';
-        
+
         try {
             const response = await fetch('/pickelball/main/backend/action_prediction.php', {
                 method: 'POST',
                 body: formData
             });
-            
-            // Check if response is OK
+
             if (!response.ok) {
                 const errorText = await response.text();
                 let errorData;
@@ -961,8 +981,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
                 throw new Error(errorData.error || `HTTP error! status: ${response.status}`);
             }
-            
-            // Get response text first to check if it's valid JSON
+
             const responseText = await response.text();
             let data;
             try {
@@ -971,54 +990,78 @@ document.addEventListener('DOMContentLoaded', function() {
                 console.error('Invalid JSON response:', responseText.substring(0, 500));
                 throw new Error('Invalid response from server. Please check server logs.');
             }
-            
+
             if (data.success && data.prediction) {
-                // Display prediction results - Update only the specific elements, don't replace entire section
                 resultSection.style.display = 'block';
-                
-                // Update prediction class - show only the final predicted action
+
                 const predictedClassEl = document.getElementById('predictedClass');
                 if (predictedClassEl) {
-                    // Display the predicted action clearly
                     predictedClassEl.textContent = data.prediction.class;
                     predictedClassEl.style.fontSize = '36px';
                     predictedClassEl.style.fontWeight = '700';
                     predictedClassEl.style.color = '#059669';
                     predictedClassEl.style.marginBottom = '0';
                 }
-                
-                // Show chat interface if analysis is successful
+
+                const confidenceEl = document.getElementById('predictionConfidence');
+                const probsEl = document.getElementById('predictionProbabilities');
+                const formatPercent = (value) => {
+                    const num = Number(value);
+                    if (Number.isNaN(num)) return null;
+                    const percent = num <= 1 ? num * 100 : num;
+                    return `${percent.toFixed(2)}%`;
+                };
+
+                const confidenceText = formatPercent(data.prediction.confidence);
+                if (confidenceEl) {
+                    confidenceEl.textContent = confidenceText
+                        ? `Confidence: ${confidenceText}`
+                        : 'Confidence: N/A';
+                }
+
+                if (probsEl) {
+                    probsEl.innerHTML = '';
+                    const probs = data.prediction.probabilities;
+                    if (probs && typeof probs === 'object') {
+                        Object.entries(probs).forEach(([label, value]) => {
+                            const percent = formatPercent(value);
+                            const chip = document.createElement('div');
+                            chip.className = 'probability-chip';
+                            chip.innerHTML = `
+                                <div class="probability-label">${escapeHtml(label)}</div>
+                                <div class="probability-value">${percent ?? 'N/A'}</div>
+                            `;
+                            probsEl.appendChild(chip);
+                        });
+                    }
+                }
+
                 const chatContainer = document.getElementById('chatContainer');
                 const chatMessages = document.getElementById('chatMessages');
-                
+
                 if (data.analysis && data.analysis.success && data.analysis.session_id) {
-                    // Set session ID FIRST before doing anything else
                     const sessionId = data.analysis.session_id;
                     console.log('Setting session_id:', sessionId);
-                    
+
                     if (!chatContainer) {
                         console.error('Chat container not found');
                     } else {
                         chatContainer.dataset.sessionId = sessionId;
                         currentSessionId = sessionId;
                         chatContainer.style.display = 'block';
-                        
-                        // Verify session_id was set
+
                         console.log('Session ID set. chatContainer.dataset.sessionId:', chatContainer.dataset.sessionId);
-                        
-                        // Clear previous messages
+
                         if (chatMessages) {
                             chatMessages.innerHTML = '';
-                            
-                            // Add initial analysis message
+
                             let initialMessage = '';
                             if (data.analysis.coaching_feedback) {
                                 initialMessage = data.analysis.coaching_feedback;
                             } else {
                                 initialMessage = 'Great effort on your shadow swing! Keep practicing and you\'ll see improvement!';
                             }
-                            
-                            // Add key issues if available
+
                             let keyIssuesHtml = '';
                             if (data.analysis.feedback && Array.isArray(data.analysis.feedback) && data.analysis.feedback.length > 0) {
                                 const issues = data.analysis.feedback.filter(item => item.severity !== 'none');
@@ -1030,7 +1073,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                     keyIssuesHtml += '</ul></div>';
                                 }
                             }
-                            
+
                             const time = new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
                             chatMessages.innerHTML = `
                                 <div class="chat-message chat-message-assistant">
@@ -1049,8 +1092,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                 </div>
                             `;
                         }
-                        
-                        // Initialize chat functionality
+
                         initChat();
                     }
                 } else {
@@ -1062,24 +1104,26 @@ document.addEventListener('DOMContentLoaded', function() {
             } else {
                 showAlert(data.error || '<?php echo htmlspecialchars(t('prediction_failed'), ENT_QUOTES, 'UTF-8'); ?>', 'error');
             }
-            
+
             submitBtn.disabled = false;
             submitBtn.textContent = '<?php echo htmlspecialchars(t('predict_action'), ENT_QUOTES, 'UTF-8'); ?>';
             videoInput.value = '';
             selectedFile.style.display = 'none';
-            
+
             resultSection.scrollIntoView({ behavior: 'smooth' });
-            
+
         } catch (error) {
             console.error('Prediction error:', error);
-            showAlert('<?php echo htmlspecialchars(t('upload_error'), ENT_QUOTES, 'UTF-8'); ?>', 'error');
+            const errorMessage = (error && error.message)
+                ? error.message
+                : '<?php echo htmlspecialchars(t('upload_error'), ENT_QUOTES, 'UTF-8'); ?>';
+            showAlert(errorMessage, 'error');
             submitBtn.disabled = false;
             submitBtn.textContent = '<?php echo htmlspecialchars(t('predict_action'), ENT_QUOTES, 'UTF-8'); ?>';
         }
     });
 });
 
-// Global variables for form elements (will be set in DOMContentLoaded)
 let uploadForm, videoInput, submitBtn, selectedFile, resultSection, alertContainer;
 
 function handleFileSelect() {
@@ -1088,9 +1132,9 @@ function handleFileSelect() {
     const fileSize = document.getElementById('fileSize');
     const selectedFile = document.getElementById('selectedFile');
     const submitBtn = document.getElementById('submitBtn');
-    
+
     if (!videoInput || !fileName || !fileSize || !selectedFile || !submitBtn) return;
-    
+
     const file = videoInput.files[0];
     if (file) {
         fileName.textContent = file.name;
@@ -1105,7 +1149,7 @@ function removeFile() {
     const selectedFile = document.getElementById('selectedFile');
     const submitBtn = document.getElementById('submitBtn');
     const resultSection = document.getElementById('resultSection');
-    
+
     if (videoInput) videoInput.value = '';
     if (selectedFile) selectedFile.style.display = 'none';
     if (submitBtn) submitBtn.disabled = false;
@@ -1124,7 +1168,7 @@ function showAlert(message, type) {
     alertContainer.innerHTML = `
         <div class="alert alert-${type}">
             <svg viewBox="0 0 24 24" fill="currentColor" style="width: 20px; height: 20px;">
-                ${type === 'error' ? 
+                ${type === 'error' ?
                     '<path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>' :
                     '<path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>'
                 }
@@ -1138,7 +1182,6 @@ function showAlert(message, type) {
 }
 
 
-// Chat functionality - Global functions
 let chatInitialized = false;
 let currentSessionId = null;
 
@@ -1151,7 +1194,7 @@ function escapeHtml(text) {
 function sendSuggestion(text) {
     const chatInput = document.getElementById('chatInput');
     if (!chatInput) return;
-    
+
     chatInput.value = text;
     chatInput.style.height = 'auto';
     sendChatMessage();
@@ -1162,40 +1205,35 @@ function sendChatMessage() {
     const chatInput = document.getElementById('chatInput');
     const chatSendBtn = document.getElementById('chatSendBtn');
     const chatSuggestions = document.getElementById('chatSuggestions');
-    
+
     if (!chatContainer || !chatInput) {
         console.error('Chat container or input not found');
         return;
     }
-    
+
     const sessionId = chatContainer.dataset.sessionId || currentSessionId;
     if (!sessionId) {
         console.error('No session ID available. chatContainer.dataset.sessionId:', chatContainer.dataset.sessionId, 'currentSessionId:', currentSessionId);
         alert('Session ID not found. Please refresh the page and try again.');
         return;
     }
-    
+
     const message = chatInput.value.trim();
     if (!message) return;
-    
-    // Add user message to chat
+
     addChatMessage(message, 'user');
     chatInput.value = '';
     chatInput.style.height = 'auto';
-    
-    // Hide suggestions after first message
+
     if (chatSuggestions) {
         chatSuggestions.style.display = 'none';
     }
-    
-    // Show loading
+
     const loadingId = addLoadingMessage();
-    
-    // Disable input
+
     chatInput.disabled = true;
     if (chatSendBtn) chatSendBtn.disabled = true;
-    
-    // Send to backend
+
     fetch('/pickelball/main/backend/chat_handler.php', {
         method: 'POST',
         headers: {
@@ -1226,7 +1264,7 @@ function sendChatMessage() {
     })
     .then(data => {
         removeLoadingMessage(loadingId);
-        
+
         if (data && data.success && data.response) {
             addChatMessage(data.response, 'assistant');
         } else if (data && data.error) {
@@ -1265,20 +1303,20 @@ function sendChatMessage() {
 function addChatMessage(text, role) {
     const chatMessages = document.getElementById('chatMessages');
     if (!chatMessages) return;
-    
+
     const messageDiv = document.createElement('div');
     messageDiv.className = `chat-message chat-message-${role}`;
-    
+
     const time = new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
     const name = role === 'user' ? '<?php echo htmlspecialchars(t('you'), ENT_QUOTES, 'UTF-8'); ?>' : '<?php echo htmlspecialchars(t('ai_coach'), ENT_QUOTES, 'UTF-8'); ?>';
-    
+
     let avatarSvg = '';
     if (role === 'assistant') {
         avatarSvg = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>';
     } else {
         avatarSvg = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>';
     }
-    
+
     messageDiv.innerHTML = `
         <div class="chat-avatar">${avatarSvg}</div>
         <div class="chat-content">
@@ -1289,7 +1327,7 @@ function addChatMessage(text, role) {
             <div class="chat-text">${escapeHtml(text).replace(/\n/g, '<br>')}</div>
         </div>
     `;
-    
+
     chatMessages.appendChild(messageDiv);
     chatMessages.scrollTop = chatMessages.scrollHeight;
 }
@@ -1297,11 +1335,11 @@ function addChatMessage(text, role) {
 function addLoadingMessage() {
     const chatMessages = document.getElementById('chatMessages');
     if (!chatMessages) return null;
-    
+
     const messageDiv = document.createElement('div');
     messageDiv.className = 'chat-message chat-message-assistant';
     messageDiv.id = 'loading-message';
-    
+
     messageDiv.innerHTML = `
         <div class="chat-avatar">
             <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
@@ -1317,7 +1355,7 @@ function addLoadingMessage() {
             </div>
         </div>
     `;
-    
+
     chatMessages.appendChild(messageDiv);
     chatMessages.scrollTop = chatMessages.scrollHeight;
     return 'loading-message';
@@ -1333,25 +1371,23 @@ function removeLoadingMessage(id) {
 function initChat() {
     if (chatInitialized) return;
     chatInitialized = true;
-    
+
     const chatContainer = document.getElementById('chatContainer');
     const chatInput = document.getElementById('chatInput');
     const chatSendBtn = document.getElementById('chatSendBtn');
-    
+
     if (!chatContainer || !chatInput) return;
-    
+
     const sessionId = chatContainer.dataset.sessionId;
     if (!sessionId) return;
-    
+
     currentSessionId = sessionId;
-    
-    // Auto-resize textarea
+
     chatInput.addEventListener('input', function() {
         this.style.height = 'auto';
         this.style.height = Math.min(this.scrollHeight, 120) + 'px';
     });
-    
-    // Send on Enter (Shift+Enter for new line)
+
     chatInput.addEventListener('keydown', function(e) {
         if (e.key === 'Enter' && !e.shiftKey) {
             e.preventDefault();
@@ -1360,7 +1396,6 @@ function initChat() {
     });
 }
 
-// Toggle history details
 function toggleHistoryDetails(element) {
     element.classList.toggle('expanded');
 }
@@ -1368,4 +1403,3 @@ function toggleHistoryDetails(element) {
 </script>
 
 <?php require_once __DIR__ . '/../../includes/footer.php'; ?>
-

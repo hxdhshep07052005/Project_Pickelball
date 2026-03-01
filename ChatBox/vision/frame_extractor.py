@@ -46,7 +46,6 @@ def extract_frames(
         if frame_idx % interval_frames == 0:
             burst = []
 
-            # Collect burst
             for _ in range(burst_size):
                 ret, frame = cap.read()
                 if not ret:
@@ -56,10 +55,8 @@ def extract_frames(
                 burst.append((score, frame))
                 frame_idx += 1
 
-            # Sort by sharpness (descending)
             burst.sort(key=lambda x: x[0], reverse=True)
 
-            # Keep top-K frames
             for score, frame in burst[:keep_top_k]:
                 filename = f"frame_{saved:04d}_sharp_{int(score)}.jpg"
                 cv2.imwrite(

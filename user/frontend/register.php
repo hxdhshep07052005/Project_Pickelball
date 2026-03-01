@@ -1,10 +1,7 @@
 <?php
 declare(strict_types=1);
 
-/**
- * Registration page frontend
- * Displays registration form with email, name, password fields and Google OAuth option
- */
+
 
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
@@ -13,13 +10,11 @@ if (session_status() === PHP_SESSION_NONE) {
 require __DIR__ . '/../backend/session.php';
 $config = require __DIR__ . '/../backend/config.php';
 
-// Redirect to home if already logged in
 if (isset($_SESSION['user'])) {
     header('Location: /pickelball/main/frontend/index.php');
     exit;
 }
 
-// Get form data and error from session (if any)
 $form = $_SESSION['register_form'] ?? ['email' => '', 'name' => ''];
 $error = $_SESSION['register_error'] ?? null;
 unset($_SESSION['register_error']);
@@ -193,4 +188,3 @@ require __DIR__ . '/../../includes/header.php';
 </section>
 <script src="https://www.google.com/recaptcha/api.js" async defer></script>
 <?php require __DIR__ . '/../../includes/footer.php'; ?>
-

@@ -1,21 +1,16 @@
 <?php
 declare(strict_types=1);
 
-/**
- * Admin Users Management page
- * List, view, edit, and delete users
- */
+
 
 require __DIR__ . '/../backend/require_auth.php';
 
 $admin = $_SESSION['admin'];
 
-// Pagination
 $page = isset($_GET['page']) ? max(1, (int)$_GET['page']) : 1;
 $limit = 20;
 $offset = ($page - 1) * $limit;
 
-// Search
 $search = isset($_GET['search']) ? trim($_GET['search']) : '';
 $searchQuery = '';
 $searchParams = [];
@@ -26,25 +21,22 @@ if ($search !== '') {
     $searchParams = [$searchTerm, $searchTerm];
 }
 
-// Get users
 $users = [];
 $totalUsers = 0;
 $totalPages = 1;
 
 try {
-    // Count total
     $countQuery = 'SELECT COUNT(*) as count FROM users ' . $searchQuery;
     $countStmt = $pdo->prepare($countQuery);
     $countStmt->execute($searchParams);
     $totalUsers = (int)$countStmt->fetch()['count'];
-    
-    // Get users
+
     $query = 'SELECT id, email, display_name, role, status, auth_provider, email_verified_at, last_login_at, created_at FROM users ' . $searchQuery . ' ORDER BY created_at DESC LIMIT ? OFFSET ?';
     $stmt = $pdo->prepare($query);
     $params = array_merge($searchParams, [$limit, $offset]);
     $stmt->execute($params);
     $users = $stmt->fetchAll();
-    
+
     $totalPages = max(1, (int)ceil($totalUsers / $limit));
 } catch (PDOException $e) {
     error_log("Users page error: " . $e->getMessage());
@@ -275,7 +267,7 @@ try {
     <div class="page-header">
         <h2>Manage Users</h2>
     </div>
-    
+
     <div class="search-box">
         <form method="get" style="display: flex; gap: 12px; width: 100%;">
             <input type="text" name="search" class="search-input" placeholder="Search by email or name..." value="<?php echo htmlspecialchars($search, ENT_QUOTES, 'UTF-8'); ?>">
@@ -285,14 +277,14 @@ try {
             <?php endif; ?>
         </form>
     </div>
-    
+
     <div class="stats">
         <div class="stat-card">
             <h3>Total Users</h3>
             <div class="value"><?php echo number_format($totalUsers); ?></div>
         </div>
     </div>
-    
+
     <div class="table-container">
         <table>
             <thead>
@@ -335,13 +327,13 @@ try {
             </tbody>
         </table>
     </div>
-    
+
     <?php if ($totalPages > 1): ?>
         <div class="pagination">
             <?php if ($page > 1): ?>
                 <a href="?page=<?php echo $page - 1; ?><?php echo $search ? '&search=' . urlencode($search) : ''; ?>">Previous</a>
             <?php endif; ?>
-            
+
             <?php for ($i = max(1, $page - 2); $i <= min($totalPages, $page + 2); $i++): ?>
                 <?php if ($i == $page): ?>
                     <span class="current"><?php echo $i; ?></span>
@@ -349,7 +341,7 @@ try {
                     <a href="?page=<?php echo $i; ?><?php echo $search ? '&search=' . urlencode($search) : ''; ?>"><?php echo $i; ?></a>
                 <?php endif; ?>
             <?php endfor; ?>
-            
+
             <?php if ($page < $totalPages): ?>
                 <a href="?page=<?php echo $page + 1; ?><?php echo $search ? '&search=' . urlencode($search) : ''; ?>">Next</a>
             <?php endif; ?>
@@ -362,7 +354,7 @@ function deleteUser(id, email) {
     if (!confirm(`Are you sure you want to delete user "${email}"? This will also delete all their videos and related data. This action cannot be undone.`)) {
         return;
     }
-    
+
     fetch('../backend/delete_user.php', {
         method: 'POST',
         headers: {
@@ -388,4 +380,3 @@ function deleteUser(id, email) {
 
 </body>
 </html>
-

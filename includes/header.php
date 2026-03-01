@@ -5,7 +5,6 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-// Load i18n functions
 require_once __DIR__ . '/i18n.php';
 
 if (!isset($pageTitle)) {
@@ -15,7 +14,6 @@ if (!isset($pageTitle)) {
 $isAuthenticated = isset($_SESSION['user']);
 $userName = $isAuthenticated ? $_SESSION['user']['name'] : '';
 
-// Get user preferences for theme and language
 $userTheme = 'light';
 $userLanguage = 'en';
 if ($isAuthenticated) {
@@ -32,10 +30,8 @@ if ($isAuthenticated) {
             }
         }
     } catch (Exception $e) {
-        // Use defaults if error - don't break the page
         error_log('Header error loading user preferences: ' . $e->getMessage());
     } catch (Error $e) {
-        // Use defaults if fatal error - don't break the page
         error_log('Header fatal error loading user preferences: ' . $e->getMessage());
     }
 }
@@ -48,7 +44,6 @@ if ($isAuthenticated) {
     <title><?php echo htmlspecialchars($pageTitle, ENT_QUOTES, 'UTF-8'); ?></title>
     <link rel="stylesheet" href="/pickelball/css/transitions.css">
     <script>
-        // Set initial theme and language IMMEDIATELY before page loads (prevents flash)
         (function() {
             const theme = '<?php echo htmlspecialchars($userTheme, ENT_QUOTES, 'UTF-8'); ?>';
             const lang = '<?php echo htmlspecialchars($userLanguage, ENT_QUOTES, 'UTF-8'); ?>';
@@ -155,16 +150,18 @@ if ($isAuthenticated) {
         .nav-dropdown {
             position: relative;
         }
-        .nav-dropdown:hover .dropdown-menu {
+        .nav-dropdown:hover .dropdown-menu,
+        .nav-dropdown:focus-within .dropdown-menu {
             opacity: 1;
             visibility: visible;
             transform: translateY(0);
+            pointer-events: auto;
+            transition-delay: 0s;
         }
         .dropdown-menu {
             position: absolute;
-            top: 100%;
+            top: calc(100% + 8px);
             left: 0;
-            margin-top: 8px;
             background: #ffffff;
             border-radius: 8px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
@@ -173,8 +170,19 @@ if ($isAuthenticated) {
             opacity: 0;
             visibility: hidden;
             transform: translateY(-10px);
-            transition: all 0.2s;
+            pointer-events: none;
+            transition: opacity 0.18s ease, transform 0.18s ease, visibility 0s linear 0.18s;
             list-style: none;
+        }
+
+        .nav-dropdown::after,
+        .user-dropdown::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: 100%;
+            height: 12px;
         }
         .dropdown-item {
             padding: 0;
@@ -223,10 +231,13 @@ if ($isAuthenticated) {
         .user-dropdown {
             position: relative;
         }
-        .user-dropdown:hover .dropdown-menu {
+        .user-dropdown:hover .dropdown-menu,
+        .user-dropdown:focus-within .dropdown-menu {
             opacity: 1;
             visibility: visible;
             transform: translateY(0);
+            pointer-events: auto;
+            transition-delay: 0s;
         }
         .mobile-menu-toggle {
             display: none;
@@ -345,4 +356,3 @@ if ($isAuthenticated) {
             </div>
         </div>
     </header>
-

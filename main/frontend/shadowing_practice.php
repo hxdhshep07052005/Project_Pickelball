@@ -1,19 +1,15 @@
 <?php
-// Require authentication - redirect to login if not logged in
 require_once __DIR__ . '/../../user/backend/require_auth.php';
 require_once __DIR__ . '/../../includes/i18n.php';
 require_once __DIR__ . '/../../includes/header.php';
 
-// Load backend logic to get pose information
 $poseData = require __DIR__ . '/../backend/shadowing_practice.php';
 
-// Validate pose data and redirect to selection page if invalid
 if (!$poseData['valid']) {
     header('Location: shadowing_select.php');
     exit;
 }
 
-// Extract pose data for display
 $poseName = $poseData['pose'];
 $displayName = $poseData['name'];
 $hasAssets = $poseData['hasAssets'];
@@ -290,7 +286,7 @@ $availablePoses = $poseData['availablePoses'] ?? ['Serve', 'DriveForehand', 'Dri
         </svg>
         <?php echo htmlspecialchars(t('back_to_selection'), ENT_QUOTES, 'UTF-8'); ?>
     </a>
-    
+
     <div class="practice-container">
         <!-- Camera Card (Left) -->
         <div class="practice-card camera-panel" id="cameraPanel">
@@ -331,6 +327,12 @@ $availablePoses = $poseData['availablePoses'] ?? ['Serve', 'DriveForehand', 'Dri
                             <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
                         </svg>
                         <span><?php echo htmlspecialchars(t('test_camera'), ENT_QUOTES, 'UTF-8'); ?></span>
+                    </button>
+                    <button class="toggle-video-btn" id="mirrorCameraBtn" onclick="toggleMirror()" title="Flip horizontal view">
+                        <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg" style="width: 18px; height: 18px;">
+                            <path d="M15 4l-1.41 1.41L17.17 9H6.83l3.58-3.59L9 4l-6 6 6 6 1.41-1.41L6.83 11h10.34l-3.58 3.59L15 16l6-6-6-6z"/>
+                        </svg>
+                        <span id="mirrorCameraText">Mirror: On</span>
                     </button>
                     <button class="toggle-video-btn" id="toggleVideoBtnCamera" onclick="toggleVideo()" style="visibility: hidden; opacity: 0; pointer-events: none;">
                         <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
@@ -416,7 +418,6 @@ $availablePoses = $poseData['availablePoses'] ?? ['Serve', 'DriveForehand', 'Dri
 </section>
 
 <script>
-// Toggle video panel visibility and expand camera panel
 let videoHidden = false;
 const video = document.getElementById('practiceVideo');
 const videoPanel = document.getElementById('videoPanel');
@@ -429,16 +430,13 @@ const playPauseBtn = document.getElementById('playPauseBtn');
 const playIcon = document.getElementById('playIcon');
 const pauseIcon = document.getElementById('pauseIcon');
 
-// Function to hide/show video panel and expand camera view
 function toggleVideo() {
     videoHidden = !videoHidden;
-    
+
     if (videoHidden) {
-        // Hide video panel and expand camera panel
         videoPanel.classList.add('hidden');
         cameraPanel.classList.add('expanded');
-        
-        // Smooth button transitions with delay
+
         setTimeout(() => {
             if (toggleBtn) {
                 toggleBtn.style.visibility = 'hidden';
@@ -453,11 +451,9 @@ function toggleVideo() {
             }
         }, 100);
     } else {
-        // Show video panel and restore camera panel size
         videoPanel.classList.remove('hidden');
         cameraPanel.classList.remove('expanded');
-        
-        // Smooth button transitions with delay
+
         setTimeout(() => {
             if (toggleBtn) {
                 toggleBtn.style.visibility = 'visible';
@@ -474,37 +470,59 @@ function toggleVideo() {
     }
 }
 
-// Video controls removed - using ghost trainer instead
-// Video element kept for compatibility but hidden
 
-// Camera check functionality
 let cameraStream = null;
+let isMirrorEnabled = true;
 const cameraPreview = document.getElementById('cameraPreview');
 const cameraPlaceholder = document.getElementById('cameraPlaceholder');
 const checkCameraBtn = document.getElementById('checkCameraBtn');
+const mirrorCameraText = document.getElementById('mirrorCameraText');
+
+function applyMirrorToPreview() {
+    const transformValue = isMirrorEnabled ? 'scaleX(-1)' : 'scaleX(1)';
+    [cameraPreview, ghostCanvas].forEach((el) => {
+        if (!el) return;
+        el.style.transform = transformValue;
+        el.style.transformOrigin = 'center center';
+    });
+}
+
+function updateMirrorLabel() {
+    if (!mirrorCameraText) return;
+    mirrorCameraText.textContent = isMirrorEnabled ? 'Mirror: On' : 'Mirror: Off';
+}
+
+function toggleMirror() {
+    isMirrorEnabled = !isMirrorEnabled;
+    applyMirrorToPreview();
+    updateMirrorLabel();
+    showCameraMessage(`Horizontal mirror ${isMirrorEnabled ? 'enabled' : 'disabled'}.`, 'success');
+}
+
+async function startCameraStream() {
+    const stream = await navigator.mediaDevices.getUserMedia({
+        video: {
+            width: { ideal: 1280 },
+            height: { ideal: 720 },
+            facingMode: { ideal: 'user' }
+        }
+    });
+
+    if (cameraStream) {
+        cameraStream.getTracks().forEach(track => track.stop());
+    }
+
+    cameraStream = stream;
+    cameraPreview.srcObject = stream;
+    cameraPreview.style.display = 'block';
+    cameraPlaceholder.style.display = 'none';
+    await cameraPreview.play().catch(() => {});
+}
 
 async function checkCamera() {
     try {
-        // Request camera access
-        const stream = await navigator.mediaDevices.getUserMedia({ 
-            video: { 
-                width: { ideal: 1280 },
-                height: { ideal: 720 },
-                facingMode: 'user'
-            } 
-        });
-        
-        // Stop previous stream if exists
-        if (cameraStream) {
-            cameraStream.getTracks().forEach(track => track.stop());
-        }
-        
-        cameraStream = stream;
-        cameraPreview.srcObject = stream;
-        cameraPreview.style.display = 'block';
-        cameraPlaceholder.style.display = 'none';
-        
-        // Update button text
+        await startCameraStream();
+
         checkCameraBtn.innerHTML = `
             <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg" style="width: 18px; height: 18px;">
                 <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
@@ -512,8 +530,7 @@ async function checkCamera() {
             <span><?php echo htmlspecialchars(t('stop_camera'), ENT_QUOTES, 'UTF-8'); ?></span>
         `;
         checkCameraBtn.onclick = stopCamera;
-        
-        // Show success message
+
         showCameraMessage('<?php echo htmlspecialchars(t('camera_working'), ENT_QUOTES, 'UTF-8'); ?>', 'success');
     } catch (error) {
         console.error('Camera error:', error);
@@ -537,8 +554,7 @@ function stopCamera() {
     cameraPreview.srcObject = null;
     cameraPreview.style.display = 'none';
     cameraPlaceholder.style.display = 'flex';
-    
-    // Update button text
+
     checkCameraBtn.innerHTML = `
         <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg" style="width: 18px; height: 18px;">
             <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
@@ -549,13 +565,11 @@ function stopCamera() {
 }
 
 function showCameraMessage(message, type) {
-    // Remove existing message
     const existingMsg = document.getElementById('cameraMessage');
     if (existingMsg) {
         existingMsg.remove();
     }
-    
-    // Create message element
+
     const msgDiv = document.createElement('div');
     msgDiv.id = 'cameraMessage';
     msgDiv.style.cssText = `
@@ -568,23 +582,21 @@ function showCameraMessage(message, type) {
         z-index: 10000;
         max-width: 400px;
         animation: slideIn 0.3s ease;
-        ${type === 'success' 
-            ? 'background: #f0fdf4; border: 1px solid #bbf7d0; color: #166534;' 
+        ${type === 'success'
+            ? 'background: #f0fdf4; border: 1px solid #bbf7d0; color: #166534;'
             : 'background: #fef2f2; border: 1px solid #fecaca; color: #991b1b;'
         }
     `;
     msgDiv.textContent = message;
-    
+
     document.body.appendChild(msgDiv);
-    
-    // Auto remove after 5 seconds
+
     setTimeout(() => {
         msgDiv.style.animation = 'slideOut 0.3s ease';
         setTimeout(() => msgDiv.remove(), 300);
     }, 5000);
 }
 
-// Add CSS animations
 const style = document.createElement('style');
 style.textContent = `
     @keyframes slideIn {
@@ -610,7 +622,6 @@ style.textContent = `
 `;
 document.head.appendChild(style);
 
-// Stop camera when page is unloaded
 window.addEventListener('beforeunload', () => {
     if (cameraStream) {
         cameraStream.getTracks().forEach(track => track.stop());
@@ -620,9 +631,7 @@ window.addEventListener('beforeunload', () => {
     }
 });
 
-// ==================== GHOST TRAINER FUNCTIONALITY ====================
 
-// Get pose from PHP
 const SELECTED_POSE = "<?php echo htmlspecialchars($poseName, ENT_QUOTES, 'UTF-8'); ?>";
 const POSES_LIST = <?php echo json_encode($availablePoses); ?>;
 const SIMILARITY_THRESH = 0.85;
@@ -633,7 +642,6 @@ let ghostTrainerActive = false;
 let poseDetector = null;
 let modelInitialized = false;
 let modelInitializing = false;
-// Set current pose index based on selected pose from URL
 let currentPoseIdx = POSES_LIST.indexOf(SELECTED_POSE);
 if (currentPoseIdx === -1) currentPoseIdx = 0; // Fallback to first pose if not found
 let currentStage = 0;
@@ -646,7 +654,6 @@ let ghostMetadata = {};
 let targetPoses = {};
 let animationFrameId = null;
 
-// Reuse cameraPreview from above, don't redeclare
 const ghostCanvas = document.getElementById('ghostCanvas');
 const ghostTrainerUI = document.getElementById('ghostTrainerUI');
 const poseNameDisplay = document.getElementById('poseNameDisplay');
@@ -661,7 +668,6 @@ const runModelBtn = document.getElementById('runModelBtn');
 const runModelBtnText = document.getElementById('runModelBtnText');
 const startGhostTrainerBtn = document.getElementById('startGhostTrainerBtn');
 
-// ==================== MODEL INITIALIZATION ====================
 
 async function runModel() {
     if (modelInitializing) {
@@ -680,14 +686,12 @@ async function runModel() {
     runModelBtnText.textContent = 'Initializing...';
 
     try {
-        // Check if MediaPipe Pose library is loaded
         if (typeof Pose === 'undefined') {
             throw new Error('MediaPipe Pose library not loaded. Please refresh the page.');
         }
 
         showCameraMessage('Loading MediaPipe Pose model...', 'success');
 
-        // Initialize MediaPipe Pose
         poseDetector = new Pose({
             locateFile: (file) => {
                 const baseUrl = `https://unpkg.com/@mediapipe/pose/${file}`;
@@ -696,7 +700,6 @@ async function runModel() {
             }
         });
 
-        // Set options
         poseDetector.setOptions({
             modelComplexity: 2,
             smoothLandmarks: true,
@@ -706,14 +709,11 @@ async function runModel() {
             minTrackingConfidence: 0.5
         });
 
-        // Wait a bit for model to fully load assets
         showCameraMessage('Loading model assets...', 'success');
         await new Promise(resolve => setTimeout(resolve, 2000));
 
-        // Test the model with a simple test
         showCameraMessage('Testing model...', 'success');
-        
-        // Create a test canvas to verify model works
+
         const testCanvas = document.createElement('canvas');
         testCanvas.width = 640;
         testCanvas.height = 480;
@@ -721,17 +721,15 @@ async function runModel() {
         testCtx.fillStyle = '#000000';
         testCtx.fillRect(0, 0, 640, 480);
 
-        // Test with blank image (just to verify model can process)
         let testCompleted = false;
         const testCallback = (results) => {
             if (!testCompleted) {
                 testCompleted = true;
                 modelInitialized = true;
                 modelInitializing = false;
-                
-                // Remove test callback
+
                 poseDetector.onResults(null);
-                
+
                 runModelBtn.disabled = false;
                 runModelBtnText.innerHTML = `
                     <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg" style="width: 18px; height: 18px;">
@@ -741,7 +739,7 @@ async function runModel() {
                 `;
                 runModelBtn.style.background = '#10b981';
                 runModelBtn.style.color = 'white';
-                
+
                 showCameraMessage('✓ MediaPipe Model initialized successfully!', 'success');
                 startGhostTrainerBtn.style.display = 'flex';
             }
@@ -749,7 +747,6 @@ async function runModel() {
 
         poseDetector.onResults(testCallback);
 
-        // Send test frame
         try {
             poseDetector.send({ image: testCanvas });
         } catch (error) {
@@ -769,8 +766,7 @@ async function runModel() {
             showCameraMessage('✓ MediaPipe Model initialized!', 'success');
             startGhostTrainerBtn.style.display = 'flex';
         }
-        
-        // Timeout after 5 seconds
+
         setTimeout(() => {
             if (!testCompleted) {
                 modelInitializing = false;
@@ -787,7 +783,7 @@ async function runModel() {
         modelInitialized = false;
         runModelBtn.disabled = false;
         runModelBtnText.textContent = 'Run Model';
-        
+
         let errorMsg = 'Failed to initialize model: ' + error.message;
         if (error.message.includes('NetworkError') || error.message.includes('Failed to fetch')) {
             errorMsg = 'Network error: Cannot load MediaPipe assets. Please check your internet connection.';
@@ -796,7 +792,6 @@ async function runModel() {
     }
 }
 
-// ==================== GHOST TRAINER ====================
 
 async function startGhostTrainer() {
     if (ghostTrainerActive) {
@@ -804,13 +799,11 @@ async function startGhostTrainer() {
         return;
     }
 
-    // Check if model is initialized
     if (!modelInitialized || !poseDetector) {
         showCameraMessage('Please run the model first by clicking "Run Model" button', 'error');
         return;
     }
 
-    // Ensure camera is started
     if (!cameraStream) {
         await checkCamera();
         if (!cameraStream) {
@@ -824,13 +817,11 @@ async function startGhostTrainer() {
     currentStage = 0;
     inCooldown = false;
 
-    // Show UI
     ghostTrainerUI.style.display = 'block';
     ghostCanvas.style.display = 'block';
 
     showCameraMessage('Loading pose assets...', 'success');
 
-    // Load assets for current pose
     try {
         await loadPoseAssets(POSES_LIST[currentPoseIdx]);
         showCameraMessage('Assets loaded successfully!', 'success');
@@ -841,20 +832,16 @@ async function startGhostTrainer() {
         return;
     }
 
-    // Set up pose detection callback
     poseDetector.onResults(onPoseResults);
-    
-    // Start detection loop
+
     startDetectionLoop();
-    
+
     showCameraMessage('Ghost Trainer started!', 'success');
-    
-    // Update button states
+
     if (runModelBtn) {
         runModelBtn.style.display = 'none'; // Hide run model button when trainer is active
     }
 
-    // Update buttons
     const btn = document.getElementById('startGhostTrainerBtn');
     btn.innerHTML = `
         <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg" style="width: 18px; height: 18px;">
@@ -863,8 +850,7 @@ async function startGhostTrainer() {
         <span>Stop Trainer</span>
     `;
     btn.onclick = startGhostTrainer;
-    
-    // Show control buttons
+
     document.getElementById('nextPoseBtn').style.display = 'flex';
     document.getElementById('resetStageBtn').style.display = 'flex';
 }
@@ -875,16 +861,11 @@ function stopGhostTrainer() {
         cancelAnimationFrame(animationFrameId);
         animationFrameId = null;
     }
-    
-    // Don't close poseDetector here - keep it for reuse
-    // if (poseDetector) {
-    //     poseDetector.close();
-    //     poseDetector = null;
-    // }
-    
+
+
     ghostTrainerUI.style.display = 'none';
     ghostCanvas.style.display = 'none';
-    
+
     const ctx = ghostCanvas.getContext('2d');
     ctx.clearRect(0, 0, ghostCanvas.width, ghostCanvas.height);
 
@@ -896,12 +877,10 @@ function stopGhostTrainer() {
         <span>Start Ghost Trainer</span>
     `;
     btn.onclick = startGhostTrainer;
-    
-    // Hide control buttons
+
     document.getElementById('nextPoseBtn').style.display = 'none';
     document.getElementById('resetStageBtn').style.display = 'none';
-    
-    // Show run model button again if model is still initialized
+
     if (runModelBtn && modelInitialized) {
         runModelBtn.style.display = 'flex';
     }
@@ -909,14 +888,13 @@ function stopGhostTrainer() {
 
 function nextPose() {
     if (!ghostTrainerActive) return;
-    
+
     currentPoseIdx = (currentPoseIdx + 1) % POSES_LIST.length;
     currentStage = 0;
     inCooldown = false;
     matchDuration = 0;
     progressBar.style.width = '0%';
-    
-    // Load new pose assets
+
     loadPoseAssets(POSES_LIST[currentPoseIdx]).then(() => {
         console.log(`Switched to: ${POSES_LIST[currentPoseIdx]}`);
     });
@@ -924,7 +902,7 @@ function nextPose() {
 
 function resetStage() {
     if (!ghostTrainerActive) return;
-    
+
     currentStage = 0;
     inCooldown = false;
     matchDuration = 0;
@@ -936,8 +914,7 @@ function resetStage() {
 
 async function loadPoseAssets(poseName) {
     const baseUrl = '/pickelball/shadowing_for_pickleball-main/shadowing_for_pickleball-main/assets/' + poseName + '/';
-    
-    // Load ghost images
+
     for (let i = 0; i < 4; i++) {
         const img = new Image();
         img.src = baseUrl + 'ghost_' + i + '.png';
@@ -949,7 +926,6 @@ async function loadPoseAssets(poseName) {
         ghostImages[poseName][i] = img;
     }
 
-    // Load metadata and target poses
     for (let i = 0; i < 4; i++) {
         try {
             const metaResponse = await fetch(`/pickelball/main/backend/shadowing_assets_api.php?pose=${poseName}&type=meta&stage=${i}`);
@@ -981,7 +957,7 @@ async function loadPoseAssets(poseName) {
             console.error(`Error loading assets for ${poseName} stage ${i}:`, error);
         }
     }
-    
+
     console.log(`Loaded assets for ${poseName}:`, {
         images: Object.keys(ghostImages[poseName] || {}).length,
         metadata: Object.keys(ghostMetadata[poseName] || {}).length,
@@ -998,8 +974,7 @@ function startDetectionLoop() {
             }
             return;
         }
-        
-        // Check if video is ready
+
         if (cameraPreview.readyState >= 2) { // HAVE_CURRENT_DATA or higher
             try {
                 poseDetector.send({ image: cameraPreview });
@@ -1007,7 +982,7 @@ function startDetectionLoop() {
                 console.error('Error sending frame to MediaPipe:', error);
             }
         }
-        
+
         animationFrameId = requestAnimationFrame(detect);
     }
     detect();
@@ -1017,12 +992,10 @@ function onPoseResults(results) {
     if (!ghostTrainerActive) return;
 
     const poseName = POSES_LIST[currentPoseIdx];
-    
-    // Update UI
+
     poseNameDisplay.textContent = `POSE: ${poseName.toUpperCase()}`;
     stageDisplay.textContent = `Step: ${currentStage + 1}/4`;
 
-    // Set canvas size to match video
     if (ghostCanvas.width !== cameraPreview.videoWidth || ghostCanvas.height !== cameraPreview.videoHeight) {
         ghostCanvas.width = cameraPreview.videoWidth;
         ghostCanvas.height = cameraPreview.videoHeight;
@@ -1031,17 +1004,15 @@ function onPoseResults(results) {
     const ctx = ghostCanvas.getContext('2d');
     ctx.clearRect(0, 0, ghostCanvas.width, ghostCanvas.height);
 
-    // Handle cooldown
     if (inCooldown) {
         const elapsed = Date.now() - cooldownStart;
         const remaining = Math.ceil((COOLDOWN_TIME - elapsed) / 1000);
-        
+
         if (remaining > 0) {
             cooldownMessage.style.display = 'block';
             cooldownTimer.textContent = remaining;
             nextStageNum.textContent = currentStage + 1;
-            
-            // Show preview of next ghost
+
             if (ghostImages[poseName] && ghostImages[poseName][currentStage] && results.poseLandmarks) {
                 drawGhostOverlay(ctx, ghostImages[poseName][currentStage], ghostMetadata[poseName][currentStage], results.poseLandmarks, 0.2);
             }
@@ -1053,7 +1024,6 @@ function onPoseResults(results) {
         return;
     }
 
-    // Check if all stages completed
     if (currentStage >= 4) {
         ctx.fillStyle = 'rgba(0, 255, 0, 0.8)';
         ctx.font = 'bold 48px Arial';
@@ -1062,7 +1032,6 @@ function onPoseResults(results) {
         return;
     }
 
-    // Load current stage data
     const ghostImg = ghostImages[poseName] && ghostImages[poseName][currentStage];
     const ghostMeta = ghostMetadata[poseName] && ghostMetadata[poseName][currentStage];
     const targetLms = targetPoses[poseName] && targetPoses[poseName][currentStage];
@@ -1080,25 +1049,20 @@ function onPoseResults(results) {
         return;
     }
 
-    // Draw ghost overlay
     drawGhostOverlay(ctx, ghostImg, ghostMeta, results.poseLandmarks, 0.4);
 
-    // Calculate similarity score
     const simScore = calculateCosineSimilarity(results.poseLandmarks, targetLms);
 
-    // Update score display
     const scorePercent = Math.round(simScore * 100);
     scoreDisplay.textContent = `SCORE: ${scorePercent}%`;
     scoreDisplay.style.color = simScore > SIMILARITY_THRESH ? '#00ff00' : '#ff0000';
 
-    // Check if pose matches
     if (simScore > SIMILARITY_THRESH) {
         matchDuration = Date.now() - lastMatchTime;
         const progress = Math.min(100, (matchDuration / REQUIRED_HOLD_TIME) * 100);
         progressBar.style.width = progress + '%';
 
         if (matchDuration > REQUIRED_HOLD_TIME) {
-            // Stage complete!
             perfectMessage.style.display = 'block';
             setTimeout(() => {
                 perfectMessage.style.display = 'none';
@@ -1109,7 +1073,6 @@ function onPoseResults(results) {
             progressBar.style.width = '0%';
 
             if (currentStage < 4) {
-                // Start cooldown
                 inCooldown = true;
                 cooldownStart = Date.now();
             }
@@ -1127,31 +1090,26 @@ function drawGhostOverlay(ctx, ghostImg, ghostMeta, userLandmarks, alpha) {
     const canvasWidth = ghostCanvas.width;
     const canvasHeight = ghostCanvas.height;
 
-    // Get user torso height (in pixels) - MediaPipe landmarks are normalized (0-1)
     const userShoulderY = (userLandmarks[11].y + userLandmarks[12].y) / 2;
     const userHipY = (userLandmarks[23].y + userLandmarks[24].y) / 2;
     const userTorsoPx = Math.abs(userShoulderY - userHipY) * canvasHeight;
     const userHipX = (userLandmarks[23].x + userLandmarks[24].x) / 2;
 
-    // Get ghost metadata
     const ghostTorsoRatio = ghostMeta[0];
     const ghostHipX = ghostMeta[1];
     const ghostHipY = ghostMeta[2];
 
     if (ghostTorsoRatio === 0 || userTorsoPx === 0) return;
 
-    // Calculate target size
     let targetH = userTorsoPx / ghostTorsoRatio;
     const aspectRatio = ghostImg.width / ghostImg.height;
     let targetW = targetH * aspectRatio;
 
-    // Safety clamp
     if (targetH > canvasHeight * 2.5) {
         targetH = canvasHeight * 2.5;
         targetW = targetH * aspectRatio;
     }
 
-    // Calculate position (align hips)
     const userHipPxX = userHipX * canvasWidth;
     const userHipPxY = userHipY * canvasHeight;
     const ghostHipPxX = ghostHipX * targetW;
@@ -1160,7 +1118,6 @@ function drawGhostOverlay(ctx, ghostImg, ghostMeta, userLandmarks, alpha) {
     const topLeftX = userHipPxX - ghostHipPxX;
     const topLeftY = userHipPxY - ghostHipPxY;
 
-    // Draw with alpha
     ctx.globalAlpha = alpha;
     ctx.drawImage(ghostImg, topLeftX, topLeftY, targetW, targetH);
     ctx.globalAlpha = 1.0;
@@ -1179,12 +1136,10 @@ function calculateCosineSimilarity(userLandmarks, targetLmsArray) {
     for (const [idx1, idx2] of CONNECTIONS) {
         if (!userLandmarks[idx1] || !userLandmarks[idx2] || !targetLmsArray[idx1] || !targetLmsArray[idx2]) continue;
 
-        // MediaPipe landmarks have x, y, z, visibility properties
         const u1 = { x: userLandmarks[idx1].x, y: userLandmarks[idx1].y };
         const u2 = { x: userLandmarks[idx2].x, y: userLandmarks[idx2].y };
         const uVec = { x: u2.x - u1.x, y: u2.y - u1.y };
 
-        // Target landmarks are arrays [x, y]
         const t1 = { x: targetLmsArray[idx1][0], y: targetLmsArray[idx1][1] };
         const t2 = { x: targetLmsArray[idx2][0], y: targetLmsArray[idx2][1] };
         const tVec = { x: t2.x - t1.x, y: t2.y - t1.y };
@@ -1203,14 +1158,15 @@ function calculateCosineSimilarity(userLandmarks, targetLmsArray) {
     return validConnections === 0 ? 0 : totalScore / validConnections;
 }
 
-// Make functions globally accessible for onclick handlers
 window.checkCamera = checkCamera;
+window.toggleMirror = toggleMirror;
 window.runModel = runModel;
 window.startGhostTrainer = startGhostTrainer;
 window.nextPose = nextPose;
 window.resetStage = resetStage;
 window.toggleVideo = toggleVideo;
+updateMirrorLabel();
+applyMirrorToPreview();
 </script>
 
 <?php require_once __DIR__ . '/../../includes/footer.php'; ?>
-

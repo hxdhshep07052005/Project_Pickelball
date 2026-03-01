@@ -1,39 +1,32 @@
 <?php
 declare(strict_types=1);
 
-/**
- * Admin Action Predictions Management page
- * List and manage action prediction records
- */
+
 
 require __DIR__ . '/../backend/require_auth.php';
 
 $admin = $_SESSION['admin'];
 
-// Pagination
 $page = isset($_GET['page']) ? max(1, (int)$_GET['page']) : 1;
 $limit = 20;
 $offset = ($page - 1) * $limit;
 
-// Get predictions
 $predictions = [];
 $totalPredictions = 0;
 $totalPages = 1;
 
 try {
-    // Count total
     $countStmt = $pdo->query('SELECT COUNT(*) as count FROM action_predictions');
     $totalPredictions = (int)$countStmt->fetch()['count'];
-    
-    // Get predictions with user info
-    $query = 'SELECT ap.id, ap.user_id, u.email, u.display_name, ap.video_name, ap.video_path, ap.predicted_class, ap.confidence, ap.created_at 
-              FROM action_predictions ap 
-              LEFT JOIN users u ON ap.user_id = u.id 
+
+    $query = 'SELECT ap.id, ap.user_id, u.email, u.display_name, ap.video_name, ap.video_path, ap.predicted_class, ap.confidence, ap.created_at
+              FROM action_predictions ap
+              LEFT JOIN users u ON ap.user_id = u.id
               ORDER BY ap.created_at DESC LIMIT ? OFFSET ?';
     $stmt = $pdo->prepare($query);
     $stmt->execute([$limit, $offset]);
     $predictions = $stmt->fetchAll();
-    
+
     $totalPages = max(1, (int)ceil($totalPredictions / $limit));
 } catch (PDOException $e) {
     error_log("Action predictions page error: " . $e->getMessage());
@@ -369,12 +362,12 @@ try {
     <div class="page-header">
         <h2>Action Predictions</h2>
     </div>
-    
+
     <div class="stat-card">
         <h3>Total Predictions</h3>
         <div class="value"><?php echo number_format($totalPredictions); ?></div>
     </div>
-    
+
     <div class="table-container">
         <table>
             <thead>
@@ -418,13 +411,13 @@ try {
             </tbody>
         </table>
     </div>
-    
+
     <?php if ($totalPages > 1): ?>
         <div class="pagination">
             <?php if ($page > 1): ?>
                 <a href="?page=<?php echo $page - 1; ?>">Previous</a>
             <?php endif; ?>
-            
+
             <?php for ($i = max(1, $page - 2); $i <= min($totalPages, $page + 2); $i++): ?>
                 <?php if ($i == $page): ?>
                     <span class="current"><?php echo $i; ?></span>
@@ -432,7 +425,7 @@ try {
                     <a href="?page=<?php echo $i; ?>"><?php echo $i; ?></a>
                 <?php endif; ?>
             <?php endfor; ?>
-            
+
             <?php if ($page < $totalPages): ?>
                 <a href="?page=<?php echo $page + 1; ?>">Next</a>
             <?php endif; ?>
@@ -475,7 +468,7 @@ function viewPrediction(id) {
             if (data.success) {
                 const prediction = data.prediction;
                 const modalBody = document.getElementById('modalBody');
-                
+
                 let html = `
                     <div class="detail-section">
                         <h3>Basic Information</h3>
@@ -505,7 +498,7 @@ function viewPrediction(id) {
                         </div>
                     </div>
                 `;
-                
+
                 if (prediction.probabilities && Object.keys(prediction.probabilities).length > 0) {
                     html += `
                         <div class="detail-section">
@@ -514,7 +507,7 @@ function viewPrediction(id) {
                         </div>
                     `;
                 }
-                
+
                 modalBody.innerHTML = html;
                 document.getElementById('predictionModal').classList.add('active');
             } else {
@@ -532,14 +525,14 @@ function playVideo(videoPath) {
         alert('Video path not available');
         return;
     }
-    
+
     const videoPlayer = document.getElementById('videoPlayer');
     const videoPlayerInfo = document.getElementById('videoPlayerInfo');
     const videoName = videoPath.split('/').pop();
-    
+
     videoPlayer.src = videoPath;
     videoPlayerInfo.innerHTML = `<strong>Video:</strong> ${escapeHtml(videoName)}`;
-    
+
     document.getElementById('videoPlayerModal').classList.add('active');
 }
 
@@ -547,7 +540,7 @@ function deletePrediction(id) {
     if (!confirm('Are you sure you want to delete this prediction? This action cannot be undone.')) {
         return;
     }
-    
+
     fetch('../backend/delete_prediction.php', {
         method: 'POST',
         headers: {
@@ -587,7 +580,6 @@ function escapeHtml(text) {
     return div.innerHTML;
 }
 
-// Close modal when clicking outside
 document.getElementById('predictionModal').addEventListener('click', function(e) {
     if (e.target === this) {
         closeModal();
@@ -603,4 +595,3 @@ document.getElementById('videoPlayerModal').addEventListener('click', function(e
 
 </body>
 </html>
-

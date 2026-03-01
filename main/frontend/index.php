@@ -430,7 +430,7 @@ require __DIR__ . '/../../includes/header.php';
             margin-bottom: 48px;
         }
     }
-    /* Scroll Animation Styles */
+
     .fade-in-up,
     .fade-in-left,
     .fade-in-right,
@@ -673,5 +673,4 @@ require __DIR__ . '/../../includes/header.php';
 
 <script src="/pickelball/main/frontend/js/scroll-animation.js"></script>
 <?php require __DIR__ . '/../../includes/footer.php'; ?>
-
 

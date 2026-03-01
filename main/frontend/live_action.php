@@ -1,10 +1,7 @@
 <?php
 declare(strict_types=1);
 
-/**
- * Live Action Detection page frontend
- * Real-time pose detection from webcam
- */
+
 
 require_once __DIR__ . '/../../user/backend/require_auth.php';
 require_once __DIR__ . '/../../user/backend/bootstrap.php';
@@ -351,24 +348,22 @@ async function startCamera() {
                 facingMode: 'user'
             }
         });
-        
+
         videoElement.srcObject = videoStream;
         videoOverlay.classList.add('hidden');
         startBtn.disabled = true;
         stopBtn.disabled = false;
         resetBtn.disabled = false;
-        
+
         updateStatus('active', '<?php echo htmlspecialchars(t('detecting'), ENT_QUOTES, 'UTF-8'); ?>');
-        
-        // Wait for video to be ready before starting detection
+
         const startDetectionWhenReady = () => {
-            if (videoElement.readyState >= videoElement.HAVE_CURRENT_DATA && 
+            if (videoElement.readyState >= videoElement.HAVE_CURRENT_DATA &&
                 videoElement.videoWidth > 0 && videoElement.videoHeight > 0) {
                 console.log('Video ready, starting detection');
                 isDetecting = true;
                 startDetection();
             } else {
-                // Try again after a short delay
                 console.log('Video not ready yet, retrying...', {
                     readyState: videoElement.readyState,
                     width: videoElement.videoWidth,
@@ -377,13 +372,11 @@ async function startCamera() {
                 setTimeout(startDetectionWhenReady, 100);
             }
         };
-        
-        // Start detection when video metadata is loaded
+
         videoElement.addEventListener('loadedmetadata', startDetectionWhenReady, { once: true });
-        
-        // Also try immediately in case it's already loaded
+
         startDetectionWhenReady();
-        
+
     } catch (error) {
         console.error('Error accessing camera:', error);
         showError('<?php echo htmlspecialchars(t('camera_error'), ENT_QUOTES, 'UTF-8'); ?>: ' + error.message);
@@ -396,19 +389,19 @@ function stopCamera() {
         videoStream.getTracks().forEach(track => track.stop());
         videoStream = null;
     }
-    
+
     videoElement.srcObject = null;
     videoOverlay.classList.remove('hidden');
     startBtn.disabled = false;
     stopBtn.disabled = true;
     resetBtn.disabled = true;
-    
+
     isDetecting = false;
     if (detectionInterval) {
         clearInterval(detectionInterval);
         detectionInterval = null;
     }
-    
+
     updateStatus('inactive', '<?php echo htmlspecialchars(t('inactive'), ENT_QUOTES, 'UTF-8'); ?>');
     showWaiting();
 }
@@ -417,23 +410,21 @@ function startDetection() {
     if (detectionInterval) {
         clearInterval(detectionInterval);
     }
-    
-    // Update display to show detection is starting
+
     predictionDisplay.innerHTML = `
         <div class="prediction-status inactive">
             <p><?php echo htmlspecialchars(t('detecting'), ENT_QUOTES, 'UTF-8'); ?>...</p>
         </div>
     `;
-    
-    // Start immediately if video is ready
-    if (isDetecting && videoElement.readyState >= videoElement.HAVE_CURRENT_DATA && 
+
+    if (isDetecting && videoElement.readyState >= videoElement.HAVE_CURRENT_DATA &&
         videoElement.videoWidth > 0 && videoElement.videoHeight > 0) {
         console.log('Starting immediate capture');
         captureAndPredict();
     }
-    
+
     detectionInterval = setInterval(() => {
-        if (isDetecting && videoElement.readyState >= videoElement.HAVE_CURRENT_DATA && 
+        if (isDetecting && videoElement.readyState >= videoElement.HAVE_CURRENT_DATA &&
             videoElement.videoWidth > 0 && videoElement.videoHeight > 0) {
             captureAndPredict();
         }
@@ -442,19 +433,16 @@ function startDetection() {
 
 function captureAndPredict() {
     try {
-        // Capture frame from video
         const canvas = document.createElement('canvas');
         canvas.width = videoElement.videoWidth;
         canvas.height = videoElement.videoHeight;
         const ctx = canvas.getContext('2d');
         ctx.drawImage(videoElement, 0, 0);
-        
-        // Convert to base64
+
         const frameData = canvas.toDataURL('image/jpeg', 0.8);
-        
-        // Send to backend
+
         sendFrameForPrediction(frameData);
-        
+
     } catch (error) {
         console.error('Error capturing frame:', error);
     }
@@ -465,24 +453,24 @@ async function sendFrameForPrediction(frameData) {
         const formData = new FormData();
         formData.append('action', 'predict');
         formData.append('frame', frameData);
-        
+
         const response = await fetch('/pickelball/main/backend/live_action.php', {
             method: 'POST',
             body: formData
         });
-        
+
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
-        
+
         const result = await response.json();
-        
+
         if (result.success) {
             displayPrediction(result);
         } else {
             showError(result.error || '<?php echo htmlspecialchars(t('prediction_error'), ENT_QUOTES, 'UTF-8'); ?>');
         }
-        
+
     } catch (error) {
         console.error('Prediction error:', error);
         showError('<?php echo htmlspecialchars(t('prediction_error'), ENT_QUOTES, 'UTF-8'); ?>: ' + error.message);
@@ -490,9 +478,7 @@ async function sendFrameForPrediction(frameData) {
 }
 
 function displayPrediction(result) {
-    // Always show prediction, even if it's "Waiting..."
     if (result.status === 'ready' && result.predicted_class) {
-        // Don't show "Waiting..." if confidence is 0
         if (result.predicted_class === 'Waiting...' && result.confidence === 0) {
             predictionDisplay.innerHTML = `
                 <div class="prediction-status inactive">
@@ -501,7 +487,7 @@ function displayPrediction(result) {
             `;
             return;
         }
-        
+
         predictionDisplay.innerHTML = `
             <div class="prediction-result">
                 <div class="predicted-class">${result.predicted_class}</div>
@@ -518,7 +504,7 @@ function displayPrediction(result) {
         `;
         return;
     }
-    
+
     showWaiting();
 }
 
@@ -548,23 +534,22 @@ async function resetBuffer() {
     try {
         const formData = new FormData();
         formData.append('action', 'reset');
-        
+
         const response = await fetch('/pickelball/main/backend/live_action.php', {
             method: 'POST',
             body: formData
         });
-        
+
         if (!response.ok) {
             const errorText = await response.text();
             console.error('Reset response error:', errorText);
             throw new Error(`HTTP error! status: ${response.status}`);
         }
-        
+
         const result = await response.json();
-        
+
         if (result.success) {
             showWaiting();
-            // Restart detection if camera is still active
             if (isDetecting && videoStream) {
                 if (detectionInterval) {
                     clearInterval(detectionInterval);
@@ -574,17 +559,15 @@ async function resetBuffer() {
         } else {
             throw new Error(result.error || 'Reset failed');
         }
-        
+
     } catch (error) {
         console.error('Reset error:', error);
         showError('<?php echo htmlspecialchars(t('reset_error'), ENT_QUOTES, 'UTF-8'); ?>: ' + error.message);
     }
 }
 
-// Cleanup on page unload
 window.addEventListener('beforeunload', () => {
     stopCamera();
 });
 </script>
 <?php require_once __DIR__ . '/../../includes/footer.php'; ?>
-
