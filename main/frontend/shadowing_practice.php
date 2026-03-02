@@ -913,7 +913,7 @@ function resetStage() {
 }
 
 async function loadPoseAssets(poseName) {
-    const baseUrl = '/pickelball/shadowing_for_pickleball-main/shadowing_for_pickleball-main/assets/' + poseName + '/';
+    const baseUrl = '/pickelball/shadowing_newest/shadowing/assets/' + poseName + '/';
 
     for (let i = 0; i < 4; i++) {
         const img = new Image();

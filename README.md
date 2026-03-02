@@ -1,3 +1,40 @@
+# Pickleball Training Application
+
+## Overview
+
+Pickleball Training Application is a web platform for pickleball skill development with AI-assisted training tools.
+
+## Core Modules
+
+- Video Analysis
+- Action Prediction
+- Shadowing Practice
+- Live Action Detection
+- Pickleball Chatbot
+
+## Technology Stack
+
+- Frontend: HTML, CSS, JavaScript, PHP templates
+- Backend: PHP, Python services
+- AI/ML: MediaPipe, YOLO, LSTM, Vision-Language pipeline, Ollama/OpenAI-compatible LLM flow
+- Database: MySQL
+- Runtime: XAMPP (Apache + PHP + MySQL)
+
+## Project Scope
+
+- Build an end-to-end training website for pickleball players
+- Integrate AI pipelines into practical coaching workflows
+- Provide real-time and upload-based training experiences
+
+## Team Members
+
+- Dang Dinh Hoa
+- Le Viet Hung
+- Tran Gia Khanh
+- Nguyen Gia Nam
+- Pham Gia Bao
+- Nguyen Duc Thanh
+
 # Pickleball Training Application - Website Development Documentation
 
 This document is written for thesis defense and focuses on the Website Development scope: page behavior, backend processing flows, data movement, and AI integration.

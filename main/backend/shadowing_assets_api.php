@@ -30,7 +30,7 @@ if ($stage < 0 || $stage > 3) {
     exit;
 }
 
-$npyPath = __DIR__ . '/../../shadowing_for_pickleball-main/shadowing_for_pickleball-main/assets/' . $pose . '/' . $type . '_' . $stage . '.npy';
+$npyPath = __DIR__ . '/../../shadowing_newest/shadowing/assets/' . $pose . '/' . $type . '_' . $stage . '.npy';
 
 if (!file_exists($npyPath)) {
     http_response_code(404);

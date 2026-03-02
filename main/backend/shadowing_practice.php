@@ -27,7 +27,7 @@ $poseDisplayNames = [
     'Volley' => 'Volley'
 ];
 
-$assetsDir = __DIR__ . '/../../shadowing_for_pickleball-main/shadowing_for_pickleball-main/assets/' . $poseName . '/';
+$assetsDir = __DIR__ . '/../../shadowing_newest/shadowing/assets/' . $poseName . '/';
 $hasAssets = is_dir($assetsDir) &&
              file_exists($assetsDir . 'ghost_0.png') &&
              file_exists($assetsDir . 'meta_0.npy') &&
@@ -35,7 +35,7 @@ $hasAssets = is_dir($assetsDir) &&
 
 $displayName = $poseDisplayNames[$poseName] ?? $poseName;
 
-$assetsBase = __DIR__ . '/../../shadowing_for_pickleball-main/shadowing_for_pickleball-main/assets/';
+$assetsBase = __DIR__ . '/../../shadowing_newest/shadowing/assets/';
 $availablePoses = [];
 foreach ($validPoses as $p) {
     $dir = $assetsBase . $p . '/';
@@ -49,6 +49,6 @@ return [
     'pose' => $poseName,
     'name' => $displayName,
     'hasAssets' => $hasAssets,
-    'assetsPath' => '/pickelball/shadowing_for_pickleball-main/shadowing_for_pickleball-main/assets/' . $poseName . '/',
+    'assetsPath' => '/pickelball/shadowing_newest/shadowing/assets/' . $poseName . '/',
     'availablePoses' => $availablePoses
 ];

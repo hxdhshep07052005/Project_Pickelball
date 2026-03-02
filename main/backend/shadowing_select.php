@@ -14,7 +14,7 @@ $poses = [
     ['pose' => 'Volley', 'name' => 'Volley', 'description' => 'Improve your volley technique at the net']
 ];
 
-$assetsDir = __DIR__ . '/../../shadowing_for_pickleball-main/shadowing_for_pickleball-main/assets/';
+$assetsDir = __DIR__ . '/../../shadowing_newest/shadowing/assets/';
 foreach ($poses as &$poseData) {
     $poseFolder = $assetsDir . $poseData['pose'];
     $poseData['hasAssets'] = is_dir($poseFolder) &&
